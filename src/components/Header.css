@@ -1,0 +1,30 @@
+.navbar{
+    padding-left: 120px;
+    padding-right: 120px;
+    position: fixed;
+    z-index: 100;
+}
+
+.search{
+    width: 300px;
+}
+
+.content h1{
+    color: #000;
+    font-weight: 600;
+}
+
+.header-account{
+    color: #000;
+    font-weight: 600;
+    display: flex;
+    z-index: 1;
+}
+
+.header-account .avatar{
+    padding-right: 5px;
+}
+
+.header-cart{
+    width: 50px;
+}
