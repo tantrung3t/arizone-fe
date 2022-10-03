@@ -4,8 +4,8 @@ import Account from "./Account";
 import Cart from "./Cart";
 import './Header.css'
 
-export default function Header(props) {
 
+export default function Header(props) {
     const handleSearch = (e) =>{
         e.preventDefault()
         const dataSubmit = new FormData(e.currentTarget);
@@ -33,7 +33,7 @@ export default function Header(props) {
             </div>
             <div>
                 <Link to='/map' className="text-base font-medium text-gray-900 dark:text-white">
-                    Giới thiệu
+                    Cửa hàng
                 </Link>
             </div>
             <form className="search" onSubmit={handleSearch}>

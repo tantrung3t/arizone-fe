@@ -1,0 +1,33 @@
+.order-container {
+    background-color: rgba(0, 0, 255, 0.108);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+}
+
+.order-tab {
+    display: flex;
+    justify-content: center;
+    background-color: rgba(0, 0, 255, 0.208);
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
+.order-tab-title{
+    width: 24%;
+    text-align: center;
+}
+
+.order-tab-underline{
+    width: 50%;
+    height: 3px;
+    border-radius: 10px;
+    background-color: black;
+    margin: auto;
+}
+
+.order-tab-vertical-line{
+    width: 5px;
+    height: 50px;
+    background-color: aqua;
+}

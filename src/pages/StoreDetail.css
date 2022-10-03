@@ -1,0 +1,87 @@
+.store-detail-cover {
+    width: 100%;
+    height: 300px;
+}
+
+.store-detail-cover img{
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+    z-index: 1;
+}
+
+.store-detail-cover .store-business{
+    display: flex;
+    width: 100%;
+    height: 200px;
+    position: absolute;
+    z-index: 2;
+    width: 1300px;
+    margin-top: 60px;
+    
+}
+
+.store-detail-cover .store-business-tab-1{
+    display: flex;
+    margin: auto;
+    width: 40%;
+    height: 80%;
+    border-radius: 15px;
+    
+}
+
+.store-detail-cover .store-business-tab-1 div{
+    align-self: center;
+}
+
+.store-detail-cover .store-business img{
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 100px;
+}
+
+.store-detail-cover .store-business-address {
+    width: 400px;
+    margin-left: 20px;
+    align-self: center;
+}
+.store-detail-cover .store-business-address p{
+    padding-bottom: 10px;
+}
+
+.store-detail-cover .store-business-tab-2{
+    margin: auto;
+    width: 0.3%;
+    height: 70%;
+    border-radius: 10px;
+    background-color: gray;
+}
+
+.store-detail-cover .store-business-tab-3{
+    margin: auto;
+    width: 50%;
+    height: 80%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.store-detail-cover .store-business-tab-3 .display-flex{
+    display: flex;
+    margin: 20px;
+}
+
+.store-detail-cover .store-business-tab-3 .display-flex p{
+    margin-left: 10px;
+}
+
+.store-detail-cover .store-business-tab-3-left{
+    align-self: center;
+    
+}
+
+.store-detail-cover .store-business-tab-3-right{
+    align-self: center;
+    width: 250px;
+}

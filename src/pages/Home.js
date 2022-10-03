@@ -15,35 +15,67 @@ import camau from '../image/logo-dam-ca-mau.png'
 
 const apiProduct = [
     {
-        product: "1"
+        product: "1",
+        product_name: "Thuốc trừ bệnh Actara 25WG",
+        image: "https://www.syngenta.com.vn/sites/g/files/zhg531/f/media-wysiwyg/2022/04/20/actara-1g-syngenta.jpg",
+        price: "25.000",
+        sale: "20.000"
     },
     {
-        product: "1"
+        product: "1",
+        product_name: "Thuốc trừ bệnh Amistar Top 325 SC",
+        image: "https://cf.shopee.vn/file/77967f5b88b9fba9028a91b07de29cbb",
+        price: "150.000",
+        sale: ""
     },
     {
-        product: "1"
+        product: "1",
+        product_name: "Thuốc trừ bệnh sinh học Vali 5SL",
+        image: "https://agriviet.org/wp-content/uploads/2021/03/Vali-5SL.jpg",
+        price: "250.000",
+        sale: "222.000"
     },
     {
-        product: "1"
+        product: "1",
+        product_name: "Thuốc trừ bệnh Top 5SL",
+        image: "https://agriviet.org/wp-content/uploads/2020/12/Stop-5SL.jpg",
+        price: "25.000",
+        sale: ""
     },
 ]
 
 export default function Home() {
 
     const { cart, setCart } = useContext(StoreContext)
-
+    const [productSale, setProductSale] = useState(apiProduct)
     const [products, setProducts] = useState(apiProduct)
+
+    const listProductSale = () => {
+        let element = productSale.map((product, index) => {
+            return <CardProduct key={index}
+                product_name = {product.product_name}
+                image = {product.image}
+                price = {product.price}
+                sale = {product.sale}
+            />
+        })
+        return element;
+    }
 
     const listProduct = () => {
         let element = products.map((product, index) => {
-            return <CardProduct key={index} />
+            return <CardProduct key={index}
+                product_name = {product.product_name}
+                image = {product.image}
+                price = {product.price}
+                sale = {product.sale}
+            />
         })
         return element;
     }
 
     const viewMoreProduct = () => {
-        setProducts(products => products.concat(apiProduct));
-        setCart(cart+1)
+        setProducts(products => products.concat(apiProduct))
     }
 
     return (
@@ -76,16 +108,13 @@ export default function Home() {
                             Sản phẩm bán chạy
                         </p>
                         <div className='home-best-seller-product'>
-                            <CardProduct />
-                            <CardProduct />
-                            <CardProduct />
-                            <CardProduct />
+                            {listProductSale()}
                         </div>
                     </div>
 
                     <div className='home-best-seller'>
                         <p className="home-title text-4xl font-bold text-gray-900 dark:text-white">
-                            Thương hiệu
+                            Sản phẩm đến từ
                         </p>
                         <div className='home-best-business'>
                             <Carousel indicators={false} slideInterval={3000}>
@@ -123,10 +152,7 @@ export default function Home() {
                             Tất cả sản phẩm
                         </p>
                         <div className='home-best-seller-product'>
-                            <CardProduct />
-                            <CardProduct />
-                            <CardProduct />
-                            <CardProduct />
+                            {listProductSale()}
                             {listProduct()}
                         </div>
 

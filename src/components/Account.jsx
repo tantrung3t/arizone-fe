@@ -2,9 +2,10 @@ import { Avatar, Dropdown } from "flowbite-react";
 import { useMemo } from "react";
 import { useState, useContext } from "react";
 import { StoreContext } from "../store/store";
+import { Link } from "react-router-dom";
 
 export default function Account() {
-    const { user, setUser } = useContext(StoreContext)
+    const { user } = useContext(StoreContext)
     // const user = {
     //     name: "Tan Trung"
     // }
@@ -19,21 +20,21 @@ export default function Account() {
             </div>
             <div className="account">
                 <Dropdown
-                    label="Trần Tấn Trung"
+                    label={user.name}
                     inline={true}
                 >
                     <Dropdown.Header>
                         <span className="block text-sm">
                         </span>
                         <span className="block text-sm font-medium truncate">
-                            tantrung.dmc@flowbite.com
+                            email_name@host.com
                         </span>
                     </Dropdown.Header>
                     <Dropdown.Item>
                         <a href="/login">Tài khoản</a>
                     </Dropdown.Item>
                     <Dropdown.Item>
-                        <a href="/login">Đơn hàng</a>
+                        <Link to="/customer/order">Đơn hàng</Link>
                     </Dropdown.Item>
                     <Dropdown.Item>
                         <a href="/login">Giỏ hàng</a>

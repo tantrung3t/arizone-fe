@@ -3,15 +3,29 @@
     padding-top: 20px;
     width: 100%;
     height: 500px;
-
     display: flex;
 }
 
-.business-info {
-    width: 100%;
-    height: 200px;
-    background-color: brown;
+@keyframes comeInLeft {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0%);
+    }
 }
+
+@keyframes comeInRight {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0%);
+    }
+}
+
 
 .product-recommend {
     width: 100%;
@@ -75,6 +89,12 @@
 }
 
 .product-detail-star {
+    display: flex;
+}
+.product-detail-reviews-amount {
+    margin-left: 10px;
+}
+.product-detail-reviews {
     display: flex;
     margin-top: 20px;
     margin-bottom: 20px;
@@ -149,4 +169,163 @@
 .product-detail-form input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+.business-info {
+    display: flex;
+    width: 100%;
+    height: 200px;
+    background-color: rgba(0, 0, 255, 0.108);
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+.business-info-tab-1{
+    display: flex;
+    margin: auto;
+    width: 40%;
+    height: 80%;
+    border-radius: 15px;
+    
+}
+
+.business-info-tab-1 div{
+    align-self: center;
+}
+
+.business-info img{
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 100px;
+}
+
+.business-info-address {
+    width: 400px;
+    margin-left: 20px;
+    align-self: center;
+}
+.business-info-address p{
+    padding-bottom: 10px;
+}
+
+.business-info-tab-2{
+    margin: auto;
+    width: 0.3%;
+    height: 70%;
+    border-radius: 10px;
+    background-color: gray;
+}
+
+.business-info-tab-3{
+    margin: auto;
+    width: 50%;
+    height: 80%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.business-info-tab-3 .display-flex{
+    display: flex;
+    margin: 20px;
+}
+
+.business-info-tab-3 .display-flex p{
+    margin-left: 10px;
+}
+
+.business-info-tab-3-left{
+    align-self: center;
+    
+}
+
+.business-info-tab-3-right{
+    align-self: center;
+    width: 250px;
+}
+
+.product-description {
+    margin: auto;
+    width: 100%;
+    background-color: rgba(0, 0, 255, 0.108);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.product-description-title p{
+    padding-top: 10px;
+    text-align: center;
+}
+
+.product-description-flex{
+    padding: 20px;
+    display: flex;
+}
+
+.product-description-flex p{
+    width: 15%;
+}
+
+.product-description-flex h5{
+    width: 80%;
+}
+
+.review-to-scroll {
+    position: absolute;
+    margin-top: -120px;
+}
+
+.review-product {
+    margin: auto;
+    width: 100%;
+    background-color: rgba(0, 0, 255, 0.108);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    padding: 20px;   
+}
+
+.review-product .more-review {
+    justify-content: space-evenly;
+    display: flex;
+    margin-top: 50px;
+}
+
+
+.review-detail {
+    display: flex;
+    margin-top: 40px;
+    padding-left: 20px;
+}
+
+.review-detail h4{
+    margin-bottom: 5px;
+}
+
+.review-detail h5{
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+
+.review-detail img{
+    width: 50px;
+    height: 50px;
+}
+
+.review-detail .review-detail-description{
+    margin-left: 20px;
+    width: 90%;
 }

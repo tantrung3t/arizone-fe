@@ -208,3 +208,9 @@
 	}
 
 }
+
+.login-form input[type=number]::-webkit-inner-spin-button,
+.login-form input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

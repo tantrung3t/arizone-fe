@@ -7,7 +7,7 @@ export default function Cart() {
     const { cart } = useContext(StoreContext)
 
     return (
-        <Link to='#cart' className='cart'>
+        <Link to='/customer/cart/' className='cart'>
             <div className='cart-amount'>
                 <div className='cart-amount-number'>
                     <p className="text-xs font-semibold text-white white:text-white">

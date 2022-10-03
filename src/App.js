@@ -1,5 +1,5 @@
 
-import './App.css';
+import './App.css'
 import React, { useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link, useParams, useRouteMatch } from 'react-router-dom'
 import { useState, createContext } from "react";
@@ -10,14 +10,18 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
+import StoreDetail from './pages/StoreDetail';
+import Cart from './pages/Cart'
+import Checkout from './pages/Checkout';
 import axios from 'axios';
-import Map from './pages/Maping'
+import Mapping from './pages/Mapping'
+import HistoryOrder from './pages/HistoryOrder';
 let permission = "admin"
 function App() {
   const [user, setUser] = useState(
     {
       permission: "",
-      name: "Tan Trung"
+      name: ""
     }
   )
   const [cart, setCart] = useState(0)
@@ -52,6 +56,11 @@ function App() {
           </Route>
           <Route path='/' component={Guest}>
           </Route>
+          <Route path='/customer' component={Customer}>
+          </Route>
+          {/* <Route path='/customer' render={() => {
+            return (localStorage.getItem("role") === "customer") ? <Customer /> : <Login />
+          }} /> */}
           <Route path='/admin' render={() => {
             return (localStorage.getItem("role") === "admin") ? <Admin /> : <Login />
           }} />
@@ -75,10 +84,35 @@ function Guest() {
       </Route>
       <Route path="/product" component={Product}>
       </Route>
-      <Route path="/map" component={Map}>
+      <Route path="/store" component={Store}>
+      </Route>
+      <Route path="/map" component={Mapping}>
       </Route>
     </Switch>
   )
+}
+
+function Customer() {
+  let { path } = useRouteMatch();
+  return (
+    <Switch>
+      <Route exact path={path}>
+        Customer Page
+      </Route>
+      <Route path={`${path}/cart/:id`} component={CheckoutRoute}>
+      </Route>
+      <Route path={`${path}/cart/`} component={Cart}>
+      </Route>
+      <Route path={`${path}/order/`} component={HistoryOrder}>
+      </Route>
+    </Switch>
+  )
+  function CheckoutRoute(){
+    let { id } = useParams();
+    return(
+      <Checkout />
+    )
+  } 
 }
 
 function Admin() {
@@ -118,6 +152,25 @@ function Product() {
     let { id } = useParams();
     return(
       <ProductDetail id={id} />
+    )
+  } 
+}
+
+function Store() {
+  let { path } = useRouteMatch();
+  return (
+    <Switch>
+      <Route exact path={path}>
+        <div>Store</div>
+      </Route>
+      <Route path='/store/:id' component={StoreBusinessDetail} />
+    </Switch>
+  )
+
+  function StoreBusinessDetail(){
+    let { id } = useParams();
+    return(
+      <StoreDetail id={id} />
     )
   } 
 }

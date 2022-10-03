@@ -60,7 +60,6 @@ export default function Login() {
                 }
             })
             .catch(function (error) {
-                console.log(error);
                 setAlertTitle("Không thành công!")
                 setAlertContent("Email hoặc mật khẩu không đúng")
                 setShowAlertFailure(true)
@@ -68,10 +67,6 @@ export default function Login() {
                     setShowAlertFailure(false)
                 }, 5000)
             });
-
-        console.log("hello")
-
-
     }
 
     const handleRegisterSubmit = (e) => {
@@ -222,11 +217,11 @@ export default function Login() {
                                 <div className="mb-3 block">
                                     <Label>Số điện thoại</Label>
                                 </div>
-                                <div>
+                                <div className="login-form">
                                     <TextInput
                                         id="phone"
                                         name="phone"
-                                        type="text"
+                                        type="number"
                                         placeholder="0123123123"
                                         required={true}
                                     />
