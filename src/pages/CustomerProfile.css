@@ -1,0 +1,96 @@
+.customer-profile-container{
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+    margin-bottom: 10px;
+    
+}
+
+.customer-profile-container-image{
+    width: 25%;
+}
+
+.customer-profile-container-cover-pic{
+    width: 200px;
+    height: 200px;
+    margin: auto;
+    border-radius: 200px;
+    justify-content: center;
+    vertical-align: middle;
+    padding: 10px;
+}
+
+.customer-profile-container-change-pic{
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    position: absolute;
+    margin-top: 135px;
+    margin-left: 135px;
+    justify-self: unset;
+    justify-content: center;
+    align-items: center;
+    padding: 7px;
+}
+
+.customer-profile-container-cover-pic-upload{
+    width: 90px;
+    margin: auto;
+    margin-top: 10px;
+}
+
+.customer-profile-container-cover-pic-upload button{
+    width: 90px;
+}
+
+.customer-profile-container-cover-pic img{
+    margin: auto;
+    width: 180px;
+    height: 180px;
+    border-radius: 180px;
+    object-fit: cover;
+}
+
+.customer-profile-container-info{
+    width: 70%;
+    min-height: 560px;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: rgba(0, 0, 255, 0.108);
+}
+
+.customer-profile-container-info-element{
+    margin-bottom: 10px;
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+.customer-profile-container-info-element-button{
+    width: 150px;
+    margin: auto;
+}
+.customer-profile-container-info-element-button button{
+    width: 150px;
+    margin-top: 10px;
+}
+
+.customer-profile-container-info-title{
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.change-password-container{
+    margin-bottom: 10px;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top: 50px;
+}
+
+.change-password-container-info-element{
+    margin-bottom: 20px;
+}
+
+.eye-password button{
+    position: absolute;
+}

@@ -53,3 +53,15 @@ body {
 .containerStyle{
   height: '400px';
 }
+
+.display-flex-only{
+  display: flex;
+}
+
+.justify-content-sb-only{
+  justify-content: space-between;
+}
+
+.margin-auto{
+  margin: auto;
+}

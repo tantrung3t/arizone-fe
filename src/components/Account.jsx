@@ -30,19 +30,32 @@ export default function Account() {
                             email_name@host.com
                         </span>
                     </Dropdown.Header>
-                    <Dropdown.Item>
-                        <a href="/login">Tài khoản</a>
-                    </Dropdown.Item>
-                    <Dropdown.Item>
-                        <Link to="/customer/order">Đơn hàng</Link>
-                    </Dropdown.Item>
-                    <Dropdown.Item>
-                        <a href="/login">Giỏ hàng</a>
-                    </Dropdown.Item>
+                    <Link to="/customer/profile">
+                        <Dropdown.Item>
+                            <p>Thông tin tài khoản</p>
+                        </Dropdown.Item>
+                    </Link>
+                    <Link to="/customer/order">
+                        <Dropdown.Item>
+                            <p>Lịch sử đơn hàng</p>
+                        </Dropdown.Item>
+                    </Link>
+                    <Link to="/customer/cart">
+                        <Dropdown.Item>
+                            <p>Giỏ hàng</p>
+                        </Dropdown.Item>
+                    </Link>
+                    <Link to="/customer/change-password">
+                        <Dropdown.Item>
+                            <p>Đổi mật khẩu</p>
+                        </Dropdown.Item>
+                    </Link>
                     <Dropdown.Divider />
-                    <Dropdown.Item>
-                        <a href="/login">Thoát tài khoản</a>
-                    </Dropdown.Item>
+                    <Link to="/">
+                        <Dropdown.Item>
+                            <p>Thoát tài khoản</p>
+                        </Dropdown.Item>
+                    </Link>
                 </Dropdown>
             </div>
         </>

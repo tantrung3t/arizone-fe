@@ -16,6 +16,8 @@ import Checkout from './pages/Checkout';
 import axios from 'axios';
 import Mapping from './pages/Mapping'
 import HistoryOrder from './pages/HistoryOrder';
+import CustomerProfile from './pages/CustomerProfile';
+import ChangePassword from './pages/ChangePassword';
 let permission = "admin"
 function App() {
   const [user, setUser] = useState(
@@ -104,6 +106,10 @@ function Customer() {
       <Route path={`${path}/cart/`} component={Cart}>
       </Route>
       <Route path={`${path}/order/`} component={HistoryOrder}>
+      </Route>
+      <Route path={`${path}/profile/`} component={CustomerProfile}>
+      </Route>
+      <Route path={`${path}/change-password/`} component={ChangePassword}>
       </Route>
     </Switch>
   )

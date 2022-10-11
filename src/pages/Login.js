@@ -112,8 +112,8 @@ export default function Login() {
                 <div className="alert">
                     {showAlertFailure ?
                         <AlertFailure
-                            title = {alertTitle}
-                            content= {alertContent}
+                            title={alertTitle}
+                            content={alertContent}
                         />
                         :
                         <div></div>
@@ -179,16 +179,12 @@ export default function Login() {
                                     />
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 mb-10 block">
-                                <Checkbox id="agree" name="agree" />
-                                <Label htmlFor="agree">
-                                    Giữ trạng thái đăng nhập
-                                </Label>
-                            </div>
-                            <div className="mb-10 block">
-                                <Button type="submit">
-                                    Đăng nhập
-                                </Button>
+                            <div className="signin-button">
+                                <div className="mb-10 block ">
+                                    <Button type="submit">
+                                        Đăng nhập
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </form>
