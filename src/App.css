@@ -32,6 +32,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -46,22 +47,46 @@ body {
   width: 100%;
   height: 600px;
 }
-.leaflet-routing-container{
+
+.leaflet-routing-container {
   display: none;
 }
 
-.containerStyle{
+.containerStyle {
   height: '400px';
 }
 
-.display-flex-only{
+.display-flex-only {
   display: flex;
 }
 
-.justify-content-sb-only{
+.justify-content-sb-only {
   justify-content: space-between;
 }
 
-.margin-auto{
+.justify-content-flex-end-only {
+  justify-content: flex-end;
+}
+
+.margin-auto {
   margin: auto;
+}
+
+.animation-spin {
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+}
+.pagination button{
+  margin-top: 15px;
+  width: 120px;
 }

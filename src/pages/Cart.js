@@ -264,7 +264,7 @@ function Product(props) {
                 </p>
             </div>
             <div className='cart-title-action'>
-                <button className='tex-lg font-semibold text-red-900 underline dark:text-white'>
+                <button className='text-lg font-semibold text-red-900 underline dark:text-white'>
                     Xoá
                 </button>
             </div>

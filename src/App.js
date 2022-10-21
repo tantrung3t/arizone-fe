@@ -18,6 +18,12 @@ import Mapping from './pages/Mapping'
 import HistoryOrder from './pages/HistoryOrder';
 import CustomerProfile from './pages/CustomerProfile';
 import ChangePassword from './pages/ChangePassword';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminUser from './pages/AdminUser';
+import AdminProduct from './pages/AdminProduct';
+import BusinessDashboard from './pages/BusinessDashboard';
+import BusinessProduct from './pages/BusinessProduct';
+import BusinessOrder from './pages/BusinessOrder';
 let permission = "admin"
 function App() {
   const [user, setUser] = useState(
@@ -63,9 +69,11 @@ function App() {
           {/* <Route path='/customer' render={() => {
             return (localStorage.getItem("role") === "customer") ? <Customer /> : <Login />
           }} /> */}
-          <Route path='/admin' render={() => {
+          <Route path='/admin' component={Admin}>
+          </Route>
+          {/* <Route path='/admin' render={() => {
             return (localStorage.getItem("role") === "admin") ? <Admin /> : <Login />
-          }} />
+          }} /> */}
           <Route path='/business' render={() => {
             return (localStorage.getItem("role") === "business") ? <Business /> : <Login />
           }} />
@@ -125,8 +133,11 @@ function Admin() {
   let { path } = useRouteMatch();
   return (
     <Switch>
-      <Route exact path={path}>
-        <div>Admin Page</div>
+      <Route exact path={path} component={AdminDashboard}>
+      </Route>
+      <Route path={`${path}/user/`} component={AdminUser}>
+      </Route>
+      <Route path={`${path}/product/`} component={AdminProduct}>
       </Route>
     </Switch>
   )
@@ -136,8 +147,11 @@ function Business() {
   let { path } = useRouteMatch();
   return (
     <Switch>
-      <Route exact path={path}>
-        <div>Business Page</div>
+      <Route exact path={path} component={BusinessDashboard}>
+      </Route>
+      <Route path={`${path}/product/`} component={BusinessProduct}>
+      </Route>
+      <Route path={`${path}/orders/`} component={BusinessOrder}>
       </Route>
     </Switch>
   )

@@ -1,0 +1,247 @@
+.business-header {
+    min-width: 1280px;
+    height: 70px;
+    background-color: black;
+
+}
+
+.business-sidebar {
+    position: fixed;
+    height: 100%;
+    width: 200px;
+    background-color: #fff;
+    box-shadow: 0 1px 20px 0 rgb(69 90 100 / 8%);
+
+}
+
+.business-container {
+    margin-left: 200px;
+    min-width: 1280px;
+    padding-top: 30px;
+}
+
+.business-account {
+    height: 120px;
+}
+
+.business-account img {
+    height: 70px;
+    width: 70px;
+    margin: auto;
+    margin-top: 10px;
+}
+
+.business-account h1 {
+    height: 70px;
+    width: 80px;
+    margin: auto;
+    margin-top: 10px;
+}
+
+.business-dashboard-analytic {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-bottom: 20px;
+}
+
+.business-dashboard-analytic-card {
+    width: 23%;
+    height: 150px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 20px 0 rgb(69 90 100 / 8%);
+}
+
+.business-dashboard-analytic-chart-60 {
+    width: 59%;
+    height: 400px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 20px 0 rgb(69 90 100 / 8%);
+    padding: 10px;
+}
+
+.business-dashboard-analytic-chart-40 {
+    width: 39%;
+    height: 400px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 20px 0 rgb(69 90 100 / 8%);
+    padding: 10px;
+}
+
+.business-dashboard-analytic-card-body {
+    height: 100px;
+    padding: 20px;
+}
+
+.business-dashboard-analytic-card-footer {
+    height: 50px;
+    border-radius: 0 0 5px 5px;
+}
+
+.gradient-red {
+    opacity: 1;
+    background-image: linear-gradient(to left, #F98080, #E02424);
+}
+
+.gradient-green {
+    opacity: 1;
+    background-image: linear-gradient(to left, #31C48D, #057A55);
+}
+
+.gradient-blue {
+    opacity: 1;
+    background-image: linear-gradient(to left, #8DA2FB, #5850EC);
+}
+
+.gradient-purple {
+    opacity: 1;
+    background-image: linear-gradient(to left, #AC94FA, #7E3AF2);
+}
+
+.business-product {
+    margin: auto;
+    width: 95%;
+    min-height: 92vh;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 20px 0 rgb(69 90 100 / 8%);
+    padding: 20px;
+}
+.business-product-hide {
+    display: none;
+}
+
+.business-product-list{
+    height: 480px;
+}
+
+.business-product-search {
+    width: 40%;
+}
+
+.business-product-filter {
+    margin-top: 15px;
+    width: 15%;
+}
+
+.business-product-title {
+    margin-top: 20px;
+    border-radius: 5px;
+    height: 50px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.business-product-title p {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+}
+
+.business-product-title p:nth-child(1) {
+    width: 15%;
+}
+.business-product-title p:nth-child(2) {
+    width: 30%;
+}
+.business-product-title p:nth-child(3) {
+    width: 15%;
+}
+.business-product-title p:nth-child(4) {
+    width: 10%;
+}
+.business-product-title p:nth-child(5) {
+    width: 10%;
+}
+.business-product-title p:nth-child(6) {
+    width: 10%;
+}
+
+
+.business-product-store {
+    border-radius: 5px;
+    height: 60px;
+    display: flex;
+    justify-content: space-around;
+}
+.business-product-store:hover{
+
+    background-color: #F3F4F6;
+}
+
+.business-product-store p {
+    text-align: center;
+    margin: auto;
+
+}
+
+.business-product-store img{
+    border-radius: 5px;
+    width: 50px;
+    height: 50px;
+    margin: auto;
+    object-fit: cover;
+}
+
+.business-product-store p:nth-child(1) {
+    width: 15%;
+}
+.business-product-store p:nth-child(2) {
+    width: 30%;
+}
+.business-product-store p:nth-child(3) {
+    width: 15%;
+}
+.business-product-store p:nth-child(4) {
+    width: 10%;
+}
+.business-product-store p:nth-child(5) {
+    width: 10%;
+}
+.business-product-store p:nth-child(6) {
+    width: 10%;
+}
+
+.business-action{
+    position: absolute;
+    background-color: #fff;
+    width: 100px;
+    height: 100px;
+    margin-left: -90px;
+    margin-top: -70px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 1px 20px 0 rgb(69 90 100 / 8%);
+    border-color: #D1D5DB;
+    border-width: 1px;
+    z-index: 20;
+    animation: show-action 0.25s;
+}
+
+@keyframes show-action{
+    from{
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
+}
+
+.business-product-store button{
+    margin-top: 7px;
+}
+
+
+.business-add-product {
+    margin: auto;
+    width: 95%;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 20px 0 rgb(69 90 100 / 8%);
+    padding: 20px;
+    display: none;
+}
