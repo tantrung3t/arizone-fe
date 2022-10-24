@@ -75,7 +75,7 @@ export default function Cart(props) {
                 <div className='body-container'>
                     <div className='cart-container'>
                         <p className='p-5 text-3xl font-bold text-gray-600 dark:text-white'>
-                            Giỏ hàng cá nhân
+                            Giỏ hàng
                         </p>
                         <div className='cart-title'>
                             <div className='cart-title-product'>

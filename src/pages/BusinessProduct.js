@@ -66,7 +66,8 @@ const store = [
 export default function BusinessProduct() {
     const [statusFilter, setStatusFilter] = useState("All")
     const [product, setProduct] = useState([])
-    const [showAddProduct, setShowAddProduct] = useState("business-product")
+    const [showListProduct, setShowListProduct] = useState("business-product")
+    const [showAddProduct, setShowAddProduct] = useState("business-add-product hide")
     const handleFilter = (e, status) => {
         console.log(status)
         if (status === "All") {
@@ -102,7 +103,12 @@ export default function BusinessProduct() {
         return element;
     }
     const addProduct = () => {
-        setShowAddProduct("business-product-hide")
+        setShowListProduct("business-product hide")
+        setShowAddProduct("business-add-product")
+    }
+    const cancelAddProduct = () => {
+        setShowListProduct("business-product")
+        setShowAddProduct("business-add-product hide")
     }
     return (
         <div>
@@ -110,7 +116,7 @@ export default function BusinessProduct() {
                 <SideBarBusiness BusinessProduct="true" />
             </div>
             <div className='business-container'>
-                <div className={showAddProduct}>
+                <div className={showListProduct}>
                     <div className='display-flex-only justify-content-flex-end-only'>
 
                     </div>
@@ -190,8 +196,15 @@ export default function BusinessProduct() {
                         </button>
                     </div>
                 </div>
-
-                <div className='business-add-product'>
+                <div className={showAddProduct}>
+                    <button onClick={cancelAddProduct} className='display-flex-only hover:text-blue-700'>
+                        <svg className="w-6 h-6 text-gray-600 hover:text-blue-700" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                        </svg>
+                        <p className='text-base font-medium text-gray-600 dark:text-gray-300 mb-3'>
+                            Trở lại
+                        </p>
+                    </button>
+                    <AddProduct />
                 </div>
             </div>
         </div>
@@ -256,5 +269,236 @@ function StoreUser(props) {
                 </button>
             </p>
         </div>
+    )
+}
+
+function AddProduct() {
+    const [image, setImage] = useState("");
+    const [imageUpload, setImageUpload] = useState("")
+    const [isUploaded, setIsUploaded] = useState(false);
+    const handleSubmit = (e) => {
+        console.log(imageUpload)
+        e.preventDefault();
+        let formData = new FormData();
+        formData.append('file', imageUpload);
+        const dataSubmit = new FormData(e.currentTarget);
+        let isActive = false
+        if (dataSubmit.get('active') !== null) {
+            isActive = true
+        }
+        let data = {
+            "product_name": dataSubmit.get('product_name'),
+            "product_image": formData,
+            "category": dataSubmit.get('category'),
+            "description": dataSubmit.get('description'),
+            "active": isActive,
+        }
+        console.log(data)
+    }
+    const handleImageChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            let reader = new FileReader();
+
+            reader.onload = function (e) {
+                setImage(e.target.result)
+                setIsUploaded(true)
+            }
+
+            reader.readAsDataURL(e.target.files[0])
+            setImageUpload(e.target.files[0])
+        }
+    }
+    return (
+        <form onSubmit={handleSubmit}>
+            <div className='display-flex-only'>
+                <div className='business-add-info-product'>
+                    <div className='display-flex-only'>
+                        <div className='business-add-product-input'>
+                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Tên sản phẩm
+                            </label>
+                            <input
+                                type="text"
+                                id="product_name"
+                                name="product_name"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Flowbite"
+                            />
+                        </div>
+                        <div className='business-add-product-input'>
+                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Loại sản phẩm
+                            </label>
+                            <select
+                                id="category"
+                                name="category"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
+                                <option defaultValue="0">Chọn</option>
+                                <option value="1">Phân bón</option>
+                                <option value="2">Thuốc đặt trị</option>
+                                <option value="3">Thuốc kích thích</option>
+                                <option value="4">Chế phẩm sinh học</option>
+                                <option value="4">Vi sinh</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className='display-flex-only'>
+                        <div className='business-add-product-input'>
+                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Công ty sản xuất
+                            </label>
+                            <input
+                                type="text"
+                                id="company"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Flowbite"
+                            />
+                        </div>
+                        <div className='business-add-product-input'>
+                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Số lượng tại cửa hàng
+                            </label>
+                            <input
+                                type="text"
+                                id="company"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Flowbite"
+                            />
+                        </div>
+                    </div>
+                    <div className='display-flex-only'>
+                        <div className='business-add-product-input'>
+                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Giá bán
+                            </label>
+                            <input
+                                type="text"
+                                id="company"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Flowbite"
+                            />
+                        </div>
+                        <div className='business-add-product-input'>
+                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                Giá khuyến mãi
+                            </label>
+                            <input
+                                type="text"
+                                id="company"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Flowbite"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className='business-add-info-product'>
+                    <div className='business-add-image-product'>
+                        <div>
+                            {
+                                !isUploaded ? (
+                                    <>
+                                        <label htmlFor="upload-input" className="upload-image">
+                                            <img src='https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png' alt='logo'></img>
+                                            {/* <div>Tải ảnh lên</div> */}
+                                            <input
+                                                hidden
+                                                type="file"
+                                                id="upload-input"
+                                                accept=".jpg,.jpeg,.png"
+                                                onChange={handleImageChange}
+                                            />
+                                        </label>
+
+                                    </>
+                                ) : (
+                                    <>
+                                        <label htmlFor="upload-input">
+                                            <input
+                                                hidden
+                                                type="file"
+                                                id="upload-input"
+                                                accept=".jpg,.jpeg,.png"
+                                                onChange={handleImageChange}
+                                            />
+                                            <img className="uploaded-img" id="uploaded-img" src={image} alt="uploaded-img" />
+                                        </label>
+
+                                    </>
+
+                                )
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div className='display-flex-only'>
+                <div className='business-add-product-textarea'>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Thành phần
+                    </label>
+                    <textarea
+                        id="message"
+                        rows="4"
+                        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Your message...">
+
+                    </textarea>
+                </div>
+                <div className='business-add-product-textarea'>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Dạng thuốc
+                    </label>
+                    <textarea
+                        id="message"
+                        rows="4"
+                        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Your message...">
+
+                    </textarea>
+                </div>
+            </div>
+            <div className='display-flex-only'>
+                <div className='business-add-product-textarea'>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Mô tả sản phẩm
+                    </label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="6"
+                        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Your message..."
+                    >
+                    </textarea>
+                </div>
+                <div className='business-add-product-textarea'>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Cơ chế tác dộng
+                    </label>
+                    <textarea
+                        id="message"
+                        rows="6"
+                        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Your message...">
+                    </textarea>
+                </div>
+            </div>
+            <div>
+                <label className="inline-flex relative items-center cursor-pointer">
+                    <input type="checkbox" defaultChecked="" name="active" id="active" className="sr-only peer" />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Active</span>
+                </label>
+            </div>
+            <div className='business-add-product-button-form'>
+                <button
+                    type="submit"
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Thêm
+                </button>
+            </div>
+        </form>
     )
 }

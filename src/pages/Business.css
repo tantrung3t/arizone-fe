@@ -111,7 +111,7 @@
     box-shadow: 0 1px 20px 0 rgb(69 90 100 / 8%);
     padding: 20px;
 }
-.business-product-hide {
+.hide {
     display: none;
 }
 
@@ -243,5 +243,120 @@
     border-radius: 5px;
     box-shadow: 0 1px 20px 0 rgb(69 90 100 / 8%);
     padding: 20px;
+}
+.business-add-product form{
+    margin-left: 10px;
+}
+
+.business-add-info-product{
+    width: 50%;
+}
+.business-add-image-product{
+    width: 200px;
+    height: 200px;
+    border-width: 3px;
+    border-style: dashed;
+    border-color: #D1D5DB;
+    margin: auto;
+    margin-top: 25px;
+}
+.business-add-image-product img{
+    margin: auto;
+    width: 190px;
+    height: 190px;
+    object-fit: scale-down;
+}
+.business-add-product-input{
+    margin-bottom: 10px;
+    width: 50%;
+    margin-right: 10px;
+}
+
+.business-add-product-textarea{
+    margin-bottom: 10px;
+    width: 50%;
+    margin-right: 10px;
+}
+.business-add-product-button-form{
+    display: flex;
+    justify-content: center;
+}
+
+/* modal */
+
+.business__modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 100;
+}
+
+.hide {
     display: none;
+}
+
+.business__modal__inner {
+    width: 90%;
+    height: 90%;
+    background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    animation: showModal linear 0.2s;
+    position: relative;
+    margin: 10px auto;
+}
+
+@keyframes showModal {
+    from {
+        top: -200px;
+        opacity: 0;
+    }
+
+    to {
+        top: 0;
+        opacity: 1;
+    }
+}
+
+.business__modal__header {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    font-size: 17px;
+}
+
+.business__modal__body {
+    padding: 15px;
+}
+
+.business__modal__footer {
+    padding: 15px;
+    text-align: right;
+}
+
+.business__modal__footer button {
+    outline: none;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+i {
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.animate-infinite{
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin{
+    100%{-webkit-transform: rotate(360deg);}
 }

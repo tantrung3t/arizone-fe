@@ -22,7 +22,7 @@
   height: 70px;
   display: flex;
   flex-wrap: nowrap;
-  background-color: #f6f6f6;
+  background-color: #fff;
   border-radius: 5px;
   text-align: center;
   margin-bottom: 10px;
@@ -63,7 +63,7 @@
 }
 
 .cart-by-store {
-  background-color: #f6f6f6;
+  background-color: #fff;
   margin-bottom: 10px;
   border-radius: 5px;
 }

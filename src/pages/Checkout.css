@@ -40,7 +40,7 @@
 .checkout-list-product {
     border-radius: 10px;
     width: 98%;
-    background-color: #f7f7f7;
+    background-color: #fff;
     margin: auto;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -72,14 +72,14 @@
     border-radius: 10px;
     padding: 10px;
     height: 280px;
-    background-color: #f7f7f7;
+    background-color: #fff;
 }
 
 .checkout-invoice-payment {
     margin-right: 10px;
     border-radius: 10px;
     padding: 10px;
-    background-color: #f7f7f7;
+    background-color: #fff;
 }
 
 .checkout-total {
@@ -92,7 +92,7 @@
     height: 50px;
     width: 98%;
     display: flex;
-    background-color: #f7f7f7;
+    background-color: #fff;
     flex-wrap: nowrap;
     border-radius: 10px;
     text-align: center;
