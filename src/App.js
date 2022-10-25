@@ -24,6 +24,8 @@ import AdminProduct from './pages/AdminProduct';
 import BusinessDashboard from './pages/BusinessDashboard';
 import BusinessProduct from './pages/BusinessProduct';
 import BusinessOrder from './pages/BusinessOrder';
+import BusinessTransaction from './pages/BusinessTransaction';
+import BusinessSetting from './pages/BusinessSetting';
 let permission = "admin"
 function App() {
   const [user, setUser] = useState(
@@ -149,9 +151,15 @@ function Business() {
     <Switch>
       <Route exact path={path} component={BusinessDashboard}>
       </Route>
-      <Route path={`${path}/product/`} component={BusinessProduct}>
+      <Route path={`${path}/products/`} component={BusinessProduct}>
+      </Route>
+      <Route path={`${path}/products/`} component={BusinessProduct}>
       </Route>
       <Route path={`${path}/orders/`} component={BusinessOrder}>
+      </Route>
+      <Route path={`${path}/transactions/`} component={BusinessTransaction}>
+      </Route>
+      <Route path={`${path}/settings/`} component={BusinessSetting}>
       </Route>
     </Switch>
   )

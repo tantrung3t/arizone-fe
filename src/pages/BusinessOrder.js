@@ -42,20 +42,20 @@ const store = [
 ]
 
 export default function BusinessOrder() {
-    const [statusFilter, setStatusFilter] = useState("All")
+    const [statusFilter, setStatusFilter] = useState("Tất cả")
     const [product, setProduct] = useState([])
     const [showAddProduct, setShowAddProduct] = useState("business-product")
     const handleFilter = (e, status) => {
         console.log(status)
-        if (status === "All") {
-            setStatusFilter("All")
-        } else if (status === "Active") {
-            setStatusFilter("Active")
-        } else if (status === "Block") {
+        if (status === "all") {
+            setStatusFilter("Tất cả")
+        } else if (status === "active") {
+            setStatusFilter("Thành công")
+        } else if (status === "cancel") {
 
-            setStatusFilter("Block")
+            setStatusFilter("Đã huỷ")
         } else {
-            setStatusFilter("Pending")
+            setStatusFilter("Chờ xử lý")
         }
     }
     const handleSearch = (e) => {
@@ -107,26 +107,26 @@ export default function BusinessOrder() {
                         </div>
                         <div className='business-filter'>
                             <Dropdown
-                                label={"Filter: " + statusFilter}
+                                label={"Bộ lọc: " + statusFilter}
                                 inline={true}>
-                                <h1 onClick={(e) => handleFilter(e, 'All')}>
+                                <h1 onClick={(e) => handleFilter(e, 'all')}>
                                     <Dropdown.Item>
-                                        <p>All</p>
+                                        <p>Tất cả</p>
                                     </Dropdown.Item>
                                 </h1>
-                                <h1 onClick={(e) => handleFilter(e, 'Active')}>
+                                <h1 onClick={(e) => handleFilter(e, 'active')}>
                                     <Dropdown.Item>
-                                        <p>Active</p>
+                                        <p>Thành công</p>
                                     </Dropdown.Item>
                                 </h1>
-                                <h1 onClick={(e) => handleFilter(e, 'Block')}>
+                                <h1 onClick={(e) => handleFilter(e, 'cancel')}>
                                     <Dropdown.Item>
-                                        <p>Block</p>
+                                        <p>Đã huỷ</p>
                                     </Dropdown.Item>
                                 </h1>
-                                <h1 onClick={(e) => handleFilter(e, 'Pending')}>
+                                <h1 onClick={(e) => handleFilter(e, 'pending')}>
                                     <Dropdown.Item>
-                                        <p>Pending</p>
+                                        <p>Chờ xử lý</p>
                                     </Dropdown.Item>
                                 </h1>
                             </Dropdown>
@@ -164,9 +164,6 @@ export default function BusinessOrder() {
                         </button>
                     </div>
                 </div>
-
-                <div className='business-add-product'>
-                </div>
             </div>
         </div>
     )
@@ -191,7 +188,7 @@ function StoreUser(props) {
         } else {
             return (
                 <p className='text-base font-semibold text-blue-500 dark:text-gray-300'>
-                    Đang xử lý
+                    Chờ xử lý
                 </p>
             )
         }

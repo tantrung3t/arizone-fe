@@ -14,6 +14,10 @@
 
 }
 
+.business-filter{
+    width: 200px;
+}
+
 .business-container {
     margin-left: 200px;
     min-width: 1280px;
@@ -176,7 +180,6 @@
 .business-product-store p {
     text-align: center;
     margin: auto;
-
 }
 
 .business-product-store img{
@@ -259,6 +262,7 @@
     border-color: #D1D5DB;
     margin: auto;
     margin-top: 25px;
+    border-radius: 5px;
 }
 .business-add-image-product img{
     margin: auto;
@@ -280,6 +284,76 @@
 .business-add-product-button-form{
     display: flex;
     justify-content: center;
+}
+
+.business-transaction-title {
+    margin-top: 20px;
+    border-radius: 5px;
+    height: 50px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.business-transaction-title p {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+}
+
+.business-transaction-title p:nth-child(1) {
+    width: 20%;
+}
+.business-transaction-title p:nth-child(2) {
+    width: 25%;
+}
+.business-transaction-title p:nth-child(3) {
+    width: 20%;
+}
+.business-transaction-title p:nth-child(4) {
+    width: 15%;
+}
+.business-transaction-title p:nth-child(5) {
+    width: 20%;
+}
+
+.business-transaction {
+    border-radius: 5px;
+    height: 60px;
+    display: flex;
+    justify-content: space-around;
+}
+.business-transaction:hover{
+
+    background-color: #F3F4F6;
+}
+
+.business-transaction p {
+    text-align: center;
+    margin: auto;
+}
+
+.business-transaction img{
+    border-radius: 5px;
+    width: 50px;
+    height: 50px;
+    margin: auto;
+    object-fit: cover;
+}
+
+.business-transaction p:nth-child(1) {
+    width: 20%;
+}
+.business-transaction p:nth-child(2) {
+    width: 25%;
+}
+.business-transaction p:nth-child(3) {
+    width: 20%;
+}
+.business-transaction p:nth-child(4) {
+    width: 15%;
+}
+.business-transaction p:nth-child(5) {
+    width: 20%;
 }
 
 /* modal */
