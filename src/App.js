@@ -3,8 +3,6 @@ import './App.css'
 import React, { useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link, useParams, useRouteMatch } from 'react-router-dom'
 import { useState, createContext } from "react";
-import ReactDOM from "react-dom/client";
-import Header from './components/Header';
 import { StoreContext } from './store/store';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -26,20 +24,44 @@ import BusinessProduct from './pages/BusinessProduct';
 import BusinessOrder from './pages/BusinessOrder';
 import BusinessTransaction from './pages/BusinessTransaction';
 import BusinessSetting from './pages/BusinessSetting';
-let permission = "admin"
+import MapDirection from './pages/MapDirection'
+
+const HOST = process.env.REACT_APP_HOST
+
 function App() {
   const [user, setUser] = useState(
     {
-      permission: "",
-      name: ""
+      permission: null,
+      full_name: null
     }
   )
   const [cart, setCart] = useState(0)
+  const getToken = async () => {
+    let data = {
+      "refresh": localStorage.getItem('refreshToken')
+    }
+    var config = {
+      method: 'post',
+      url: 'http://127.0.0.1:8000/refresh-token/',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: data
+    };
 
+    await axios(config)
+      .then(function (response) {
+        localStorage.setItem("accessToken", response.data.access)
+      })
+      .catch(function (error) {
+        localStorage.clear()
+      });
+
+  }
   const getUser = async () => {
     var config = {
       method: 'get',
-      url: 'http://127.0.0.1:8000/user/',
+      url: HOST + '/user/',
       headers: {
         'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
       }
@@ -47,15 +69,20 @@ function App() {
     await axios(config)
       .then(function (response) {
         localStorage.setItem("role", response.data.permission)
-        setUser({ ...user, name: response.data.full_name })
+        if (response.data.permission === "customer") {
+          setUser(response.data)
+        }
       })
       .catch(function (error) {
+
       });
   }
 
   useEffect(() => {
+    getToken()
     getUser()
   }, [])
+
   return (
     <Router>
       <StoreContext.Provider value={{ user, setUser, cart, setCart }}>
@@ -66,16 +93,12 @@ function App() {
           </Route>
           <Route path='/' component={Guest}>
           </Route>
-          <Route path='/customer' component={Customer}>
-          </Route>
-          {/* <Route path='/customer' render={() => {
+          <Route path='/customer' render={() => {
             return (localStorage.getItem("role") === "customer") ? <Customer /> : <Login />
-          }} /> */}
-          <Route path='/admin' component={Admin}>
-          </Route>
-          {/* <Route path='/admin' render={() => {
+          }} />
+          <Route path='/admin' render={() => {
             return (localStorage.getItem("role") === "admin") ? <Admin /> : <Login />
-          }} /> */}
+          }} />
           <Route path='/business' render={() => {
             return (localStorage.getItem("role") === "business") ? <Business /> : <Login />
           }} />
@@ -98,9 +121,18 @@ function Guest() {
       </Route>
       <Route path="/store" component={Store}>
       </Route>
+      <Route path="/map/:string" component={Direction}>
+      </Route>
       <Route path="/map" component={Mapping}>
       </Route>
     </Switch>
+  )
+}
+
+function Direction() {
+  let { string } = useParams();
+  return (
+    <MapDirection data={string} />
   )
 }
 
@@ -123,12 +155,12 @@ function Customer() {
       </Route>
     </Switch>
   )
-  function CheckoutRoute(){
+  function CheckoutRoute() {
     let { id } = useParams();
-    return(
+    return (
       <Checkout />
     )
-  } 
+  }
 }
 
 function Admin() {
@@ -176,12 +208,12 @@ function Product() {
     </Switch>
   )
 
-  function PageDetail(){
+  function PageDetail() {
     let { id } = useParams();
-    return(
+    return (
       <ProductDetail id={id} />
     )
-  } 
+  }
 }
 
 function Store() {
@@ -195,12 +227,12 @@ function Store() {
     </Switch>
   )
 
-  function StoreBusinessDetail(){
+  function StoreBusinessDetail() {
     let { id } = useParams();
-    return(
+    return (
       <StoreDetail id={id} />
     )
-  } 
+  }
 }
 
 export default App;

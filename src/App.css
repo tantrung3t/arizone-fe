@@ -48,9 +48,9 @@ body {
   height: 600px;
 }
 
-.leaflet-routing-container {
+/* .leaflet-routing-container {
   display: none;
-}
+} */
 
 .containerStyle {
   height: '400px';

@@ -5,6 +5,8 @@ import axios from "axios";
 import { useContext } from 'react';
 import { StoreContext } from '../store/store';
 
+const HOST = process.env.REACT_APP_HOST
+
 export default function Login() {
     const { user, setUser } = useContext(StoreContext)
     const [isContainerActive, setIsContainerActive] = useState('active')
@@ -31,11 +33,10 @@ export default function Login() {
         let data = {
             "email": dataSubmit.get('email'),
             "password": dataSubmit.get('password'),
-            "check": dataSubmit.get('agree')
         }
         var config = {
             method: 'post',
-            url: 'http://127.0.0.1:8000/login/',
+            url: HOST + '/login/',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -60,6 +61,7 @@ export default function Login() {
                 }
             })
             .catch(function (error) {
+                console.log(error.response.status);
                 setAlertTitle("Không thành công!")
                 setAlertContent("Email hoặc mật khẩu không đúng")
                 setShowAlertFailure(true)

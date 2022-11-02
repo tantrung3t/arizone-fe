@@ -2,16 +2,18 @@ import { Footer, Avatar } from "flowbite-react";
 import { Link } from "react-router-dom";
 import Account from "./Account";
 import Cart from "./Cart";
+import { StoreContext } from "../store/store";
+import { useState, useContext } from "react";
 import './Header.css'
 
 
 export default function Header(props) {
-    const handleSearch = (e) =>{
+    const { user } = useContext(StoreContext)
+    const handleSearch = (e) => {
         e.preventDefault()
         const dataSubmit = new FormData(e.currentTarget);
         console.log(dataSubmit.get('search-navbar'))
     }
-
     return (
         <Footer container={true} className="navbar">
             <Footer.Brand
@@ -21,18 +23,18 @@ export default function Header(props) {
                 name="Arizone"
             />
             <div>
-                <Link to='/' className="text-base font-medium text-gray-900 dark:text-white">
+                <Link to='/' className="text-base font-medium text-gray-900 dark:text-white hover:text-blue-600">
                     Trang chủ
                 </Link>
             </div>
             <div>
-                <Link to='/login' className="text-base font-medium text-gray-900 dark:text-white">
+                <Link to='/login' className="text-base font-medium text-gray-900 dark:text-white hover:text-blue-600">
                     Sản phẩm
                 </Link>
 
             </div>
             <div>
-                <Link to='/map' className="text-base font-medium text-gray-900 dark:text-white">
+                <Link to='/map' className="text-base font-medium text-gray-900 dark:text-white hover:text-blue-600">
                     Cửa hàng
                 </Link>
             </div>
@@ -56,10 +58,17 @@ export default function Header(props) {
             <div className="header-cart">
                 <Cart />
             </div>
-
-            <div className="header-account">
-                <Account></Account>
-            </div>
+            {user.full_name && user.permission
+                ?
+                <div className="header-account">
+                    <Account data={user}></Account>
+                </div>
+                : <Link to="/login" className="header-account">
+                    <p className="hover:text-blue-600">
+                        Đăng nhập
+                    </p>
+                </Link>
+            }
         </Footer>
     )
 }

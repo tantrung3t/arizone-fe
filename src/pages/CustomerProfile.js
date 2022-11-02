@@ -3,6 +3,7 @@ import AppFooter from '../components/Footer';
 import './CustomerProfile.css'
 import user from '../image/user-image.png'
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const data = {
     image: "",
@@ -12,6 +13,8 @@ const data = {
     birthday: "2000-09-13",
     sex: "male"
 }
+
+const HOST = process.env.REACT_APP_HOST
 
 export default function CustomerProfile() {
     const [profile, setProfile] = useState(
@@ -24,37 +27,73 @@ export default function CustomerProfile() {
             sex: ""
         }
     )
+    const [image, setImage] = useState("")
+    const [imageUpload, setImageUpload] = useState("")
     const [sex, setSex] = useState("other")
     const [maleCheck, setMaleCheck] = useState(false)
     const [femaleCheck, setFemaleCheck] = useState(false)
     const [otherCheck, setOtherCheck] = useState(false)
     useEffect(() => {
-        if (data.sex === "male") {
-            setMaleCheck(true)
-            setFemaleCheck(false)
-            setOtherCheck(false)
-        } else if (data.sex === "female") {
-            setFemaleCheck(true)
-            setMaleCheck(false)
-            setOtherCheck(false)
-        } else {
-            setOtherCheck(true)
-            setFemaleCheck(false)
-            setMaleCheck(false)
-        }
-        setProfile(data)
+        getUserProfile()
     }, [])
-    const handleSubmit = (e) => {
+
+    const getUserProfile = async () => {
+        var config = {
+            method: 'get',
+            url: HOST + '/user/profile/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setProfile(response.data)
+                setImage(HOST + response.data.image)
+                if (response.data.sex === "male") {
+                    setMaleCheck(true)
+                    setFemaleCheck(false)
+                    setOtherCheck(false)
+                } else if (response.data.sex === "female") {
+                    setFemaleCheck(true)
+                    setMaleCheck(false)
+                    setOtherCheck(false)
+                } else {
+                    setOtherCheck(true)
+                    setFemaleCheck(false)
+                    setMaleCheck(false)
+                }
+                setSex(response.data.sex)
+            })
+            .catch(function (error) {
+            });
+    }
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const dataSubmit = new FormData(e.currentTarget);
         let data = {
+            "full_name": dataSubmit.get("name"),
             "phone": dataSubmit.get('phone'),
-            "email": dataSubmit.get('email'),
             "name": dataSubmit.get('name'),
             "birthday": dataSubmit.get('birthday'),
             "sex": sex,
         }
-        console.log(data)
+        var config = {
+            method: 'post',
+            url: HOST + '/user/profile/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+        await axios(config)
+            .then(function (response) {
+                alert("Cập nhật thông tin thành công!")
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
     const sexMale = () => {
         setSex("male")
@@ -74,6 +113,38 @@ export default function CustomerProfile() {
         setFemaleCheck(false)
         setMaleCheck(false)
     }
+    const handleImageChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            let reader = new FileReader();
+
+            reader.onload = function (e) {
+                setImage(e.target.result)
+            }
+            reader.readAsDataURL(e.target.files[0])
+            setImageUpload(e.target.files[0])
+        }
+    }
+    const handleSubmitImage = async (e) => {
+        if(imageUpload) {
+            let formData = new FormData();
+            formData.append('image', imageUpload);
+            var config = {
+                method: 'post',
+                url: HOST + '/user/profile/image/',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                },
+                data: formData
+            };
+            await axios(config)
+                .then(function (response) {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+    }
     return (
         <div>
             <header>
@@ -84,12 +155,23 @@ export default function CustomerProfile() {
                     <div className='customer-profile-container'>
                         <div className='customer-profile-container-image'>
                             <div className='customer-profile-container-cover-pic bg-gray-300'>
+
                                 <div className='customer-profile-container-change-pic bg-gray-300'>
-                                    <svg className="text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    <label htmlFor="upload-input" className="upload-image">
+                                        <svg className="text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                        {/* <div>Tải ảnh lên</div> */}
+                                        <input
+                                            hidden
+                                            type="file"
+                                            id="upload-input"
+                                            accept=".jpg,.jpeg,.png"
+                                            onChange={handleImageChange}
+                                        />
+                                    </label>
                                 </div>
-                                {data.image
+                                {profile.image
                                     ? <img
-                                        src={data.image}
+                                        src={image}
                                         alt="store"
                                     />
                                     : <img
@@ -101,6 +183,7 @@ export default function CustomerProfile() {
                             </div>
                             <div className='customer-profile-container-cover-pic-upload'>
                                 <button
+                                    onClick={handleSubmitImage}
                                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                     Upload
                                 </button>
@@ -168,8 +251,7 @@ export default function CustomerProfile() {
                                             name="birthday"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             defaultValue={profile.birthday}
-
-                                            required />
+                                        />
                                     </div>
                                     <div>
                                         <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-gray-300">

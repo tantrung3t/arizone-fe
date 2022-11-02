@@ -18,7 +18,7 @@ function Mapping() {
         <div className="body-container">
           <MapContainer center={[10.0362005, 105.788033]} zoom={16} scrollWheelZoom={true}>
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <Marker position={[10.036100, 105.788033]}>
@@ -65,7 +65,7 @@ const RoutingMachine = createControlComponent(createRoutineMachineLayer);
 
 function Store(props) {
   return (
-    <Link to="#map" className="map-store-container">
+    <Link to="/store/1" className="map-store-container">
       <img className=''
         src={props.image}
         alt="product 1"

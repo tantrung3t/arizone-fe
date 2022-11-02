@@ -1,14 +1,17 @@
 import { Avatar, Dropdown } from "flowbite-react";
 import { useMemo } from "react";
 import { useState, useContext } from "react";
-import { StoreContext } from "../store/store";
+
 import { Link } from "react-router-dom";
 
-export default function Account() {
-    const { user } = useContext(StoreContext)
+export default function Account(props) {
     // const user = {
     //     name: "Tan Trung"
     // }
+    const handleLogOut = () => {
+        localStorage.clear()
+        window.location.replace("/")
+    }
     return (
         <>
             <div className="avatar">
@@ -20,14 +23,14 @@ export default function Account() {
             </div>
             <div className="account">
                 <Dropdown
-                    label={user.name}
+                    label={props.data.full_name}
                     inline={true}
                 >
                     <Dropdown.Header>
                         <span className="block text-sm">
                         </span>
                         <span className="block text-sm font-medium truncate">
-                            email_name@host.com
+                            Xin chào!
                         </span>
                     </Dropdown.Header>
                     <Link to="/customer/profile">
@@ -51,11 +54,11 @@ export default function Account() {
                         </Dropdown.Item>
                     </Link>
                     <Dropdown.Divider />
-                    <Link to="/">
+                    <button onClick={handleLogOut}>
                         <Dropdown.Item>
                             <p>Thoát tài khoản</p>
                         </Dropdown.Item>
-                    </Link>
+                    </button>
                 </Dropdown>
             </div>
         </>
