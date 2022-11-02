@@ -11,16 +11,13 @@ export default function AppFooter() {
             />
             <Footer.LinkGroup>
                 <Footer.Link href="#">
-                    About
+                    Về chúng tôi
                 </Footer.Link>
-                <Footer.Link href="/register">
-                    Register
-                </Footer.Link>
-                <Footer.Link href="/login">
-                    Login
+                <Footer.Link href="/business-register">
+                    Đăng ký người bán
                 </Footer.Link>
                 <Footer.Link href="#">
-                    Contact
+                    Liên hệ
                 </Footer.Link>
             </Footer.LinkGroup>
         </Footer>

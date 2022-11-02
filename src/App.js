@@ -25,6 +25,7 @@ import BusinessOrder from './pages/BusinessOrder';
 import BusinessTransaction from './pages/BusinessTransaction';
 import BusinessSetting from './pages/BusinessSetting';
 import MapDirection from './pages/MapDirection'
+import BusinessRegister from './pages/BusinessRegister';
 
 const HOST = process.env.REACT_APP_HOST
 
@@ -89,7 +90,7 @@ function App() {
         <Router>
           <Route path="/login" exact component={Login}>
           </Route>
-          <Route path="/register" component={Register}>
+          <Route path="/business-register" component={BusinessRegister}>
           </Route>
           <Route path='/' component={Guest}>
           </Route>

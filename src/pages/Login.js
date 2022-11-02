@@ -83,7 +83,7 @@ export default function Login() {
         console.log(data)
         var config = {
             method: 'post',
-            url: 'http://127.0.0.1:8000/register/',
+            url: HOST + '/register/',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -96,6 +96,7 @@ export default function Login() {
                 setTimeout(function () {
                     setShowAlertSuccess(false)
                 }, 5000)
+                e.target.reset()
             })
             .catch(function (error) {
                 console.log(error);
@@ -106,6 +107,7 @@ export default function Login() {
                     setShowAlertFailure(false)
                 }, 5000)
             });
+
     }
     return (
 
@@ -192,7 +194,7 @@ export default function Login() {
                     </form>
                 </div>
                 <div className={`right-form ${isContainerActive}`}>
-                    <form onSubmit={handleRegisterSubmit}>
+                    <form onSubmit={handleRegisterSubmit} >
                         <div className="float-right">
                             <div className="mb-5 block">
                                 <div className="title">Tạo một tài khoản</div>
