@@ -3,7 +3,7 @@ import './Admin.css'
 import { Dropdown } from 'flowbite-react';
 import { useState } from 'react';
 import { useEffect } from 'react';
-
+const HOST = process.env.REACT_APP_HOST
 const store = [
     {
         store_name: "Trang thiết bi Hoà Bình",
@@ -62,6 +62,24 @@ export default function AdminUser() {
         const dataSubmit = new FormData(e.currentTarget);
         console.log(dataSubmit.get('search-user'))
     }
+
+    const loadData = async() => {
+        var config = {
+            method: 'get',
+            url: HOST + "/admin/user/list/",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                
+            })
+            .catch(function (error) {
+
+            });
+    }
+
     useEffect(() => {
         setAccount(store)
     }, [])
