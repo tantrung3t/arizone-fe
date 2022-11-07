@@ -48,11 +48,11 @@ export default function Login() {
                     localStorage.setItem("accessToken", response.data.access)
                     localStorage.setItem("refreshToken", response.data.refresh)
                     if (response.data.permission === "admin") {
-                        localStorage.setItem("role", "admin")
+                        localStorage.setItem("role", "adm")
                         window.location = '/admin'
                     }
                     else if (response.data.permission === "business") {
-                        localStorage.setItem("role", "business")
+                        localStorage.setItem("role", "bsn")
                         window.location = '/business'
                     }
                     else {

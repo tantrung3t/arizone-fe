@@ -7,11 +7,63 @@ import { StoreContext } from '../store/store';
 import { useEffect, useState, useContext, useRef } from 'react';
 import { Avatar } from 'flowbite-react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+
+const HOST = process.env.REACT_APP_HOST
 
 export default function ProductDetail(props) {
 
     useEffect(() => {
         window.scrollTo(0, 0)
+    }, [])
+
+    const [data, setData] = useState(
+        {
+            "name": "",
+            "price": 0,
+            "sale": 0,
+            "image": "",
+            "average_rating": 0,
+            "amount_rating": 0,
+            "description": "",
+            "element": "",
+            "type": "",
+            "effect": "",
+            "product_by": "",
+            "business": {
+                "user": {
+                    "id": "",
+                    "full_name": "",
+                    "created": "",
+                    "image": ""
+                },
+                "address": "",
+                "rating": 0,
+                "amount_product": 0,
+                "sold": 0
+            }
+        }
+    )
+
+    const getProductDetail = async () => {
+        var config = {
+            method: 'get',
+            url: HOST + '/product/' + props.id,
+            headers: {
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setData(response.data)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
+
+    useEffect(() => {
+        getProductDetail()
     }, [])
 
     return (
@@ -21,9 +73,9 @@ export default function ProductDetail(props) {
             </header>
             <main>
                 <div className='body-container'>
-                    <Product id={props.id} />
-                    <Business />
-                    <ProductInformation />
+                    <Product data={data} />
+                    <Business data={data.business} />
+                    <ProductInformation data={data} />
                     {/* <ProductRecommend /> */}
                     <Review />
                 </div>
@@ -77,46 +129,24 @@ function Product(props) {
         <div className='product-container'>
             <div className='product-detail-image'>
                 <img className='product-image'
-                    src="https://www.syngenta.com.vn/sites/g/files/zhg531/f/media-wysiwyg/2022/04/20/actara-1g-syngenta.jpg"
+                    src={props.data.image}
                     alt="product 1"
                 />
-                <div className='slide-image'>
-                    <img className=''
-                        src="https://www.syngenta.com.vn/sites/g/files/zhg531/f/media-wysiwyg/2022/04/20/actara-1g-syngenta.jpg"
-                        alt="product 1"
-                    />
-                    <img className=''
-                        src="https://www.syngenta.com.vn/sites/g/files/zhg531/f/media-wysiwyg/2022/04/20/actara-1g-syngenta.jpg"
-                        alt="product 1"
-                    />
-                    <img className=''
-                        src="https://www.syngenta.com.vn/sites/g/files/zhg531/f/media-wysiwyg/2022/04/20/actara-1g-syngenta.jpg"
-                        alt="product 1"
-                    />
-                    <img className=''
-                        src="https://www.syngenta.com.vn/sites/g/files/zhg531/f/media-wysiwyg/2022/04/20/actara-1g-syngenta.jpg"
-                        alt="product 1"
-                    />
-                    <img className=''
-                        src="https://www.syngenta.com.vn/sites/g/files/zhg531/f/media-wysiwyg/2022/04/20/actara-1g-syngenta.jpg"
-                        alt="product 1"
-                    />
-                </div>
             </div>
             <div className='product-detail-info'>
                 <p className='text-3xl font-bold text-gray-700 dark:text-white'>
-                    Thuốc trừ bệnh Actara 25WG
+                    {props.data.name}
                 </p>
                 <div className="product-detail-reviews">
                     <p className='text-4xl font-semibold text-gray-600 dark:text-white'>
-                        4.5
+                        {props.data.average_rating}
                     </p>
                     <div className='product-detail-reviews-amount'>
                         <div className='product-detail-star'>
                             <StartRating />
                         </div>
                         <p className='font-semibold text-gray-600 dark:text-white'>
-                            50 đánh giá
+                            {props.data.amount_rating} đánh giá
                         </p>
                     </div>
                 </div>
@@ -124,10 +154,10 @@ function Product(props) {
                 </div>
                 <div className='product-detail-price'>
                     <p className='text-5xl font-bold text-red-600 dark:text-white'>
-                        20.000đ
+                        {props.data.sale.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
                     </p>
                     <p className='text-3xl p-3 line-through font-bold text-gray-600 dark:text-white'>
-                        25.000đ
+                        {props.data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
                     </p>
                 </div>
                 <div className='my-1 h-px bg-gray-300 dark:bg-gray-600'>
@@ -165,7 +195,7 @@ function ProductInformation(props) {
                     Mô tả sản phẩm:
                 </p>
                 <h5 className='text-lg font-bold text-gray-600 dark:text-white'>
-                    Amistar Top 325SC là thuốc trừ bệnh nội hấp và lưu dẫn mạnh rất phù hợp để kiểm soát bệnh hại trên ruộng lúa, ngô và một số cây trồng đặc thù khác.
+                    {props.data.description}
                 </h5>
             </div>
             <div>
@@ -174,7 +204,7 @@ function ProductInformation(props) {
                         Thành phần:
                     </p>
                     <h5 className='text-lg font-bold text-gray-600 dark:text-white'>
-                        200g/L Azoxystrobin + 125g/L Difenoconazole
+                        {props.data.element}
                     </h5>
                 </div>
                 <div className='product-description-flex'>
@@ -182,7 +212,7 @@ function ProductInformation(props) {
                         Dạng thuốc:
                     </p>
                     <h5 className='text-lg font-bold text-gray-600 dark:text-white'>
-                        SC (Huyền Phù Đậm Đặc)
+                        {props.data.type}
                     </h5>
                 </div>
                 <div className='product-description-flex'>
@@ -190,15 +220,7 @@ function ProductInformation(props) {
                         Cơ chế tác động:
                     </p>
                     <h5 className='text-lg font-bold text-gray-600 dark:text-white'>
-                        Amistar Top 325SC diệt tế bào nấm bệnh bằng hai cách:
-                        (1) Ngăn cản sự hình thành (ATP) ở ty thể ( năng lượng được cung cấp cho hoạt động sống của tế bào nấm bệnh)
-                        (2) Ức chế tổng hợp Ergosterol ( thành phần cấu trúc nên màng tế bào nấm bệnh)
-                        Amistar Top 325SC diệt tế bào nấm bệnh bằng hai cách:
-                        (1) Ngăn cản sự hình thành (ATP) ở ty thể ( năng lượng được cung cấp cho hoạt động sống của tế bào nấm bệnh)
-                        (2) Ức chế tổng hợp Ergosterol ( thành phần cấu trúc nên màng tế bào nấm bệnh)
-                        Amistar Top 325SC diệt tế bào nấm bệnh bằng hai cách:
-                        (1) Ngăn cản sự hình thành (ATP) ở ty thể ( năng lượng được cung cấp cho hoạt động sống của tế bào nấm bệnh)
-                        (2) Ức chế tổng hợp Ergosterol ( thành phần cấu trúc nên màng tế bào nấm bệnh)
+                        {props.data.effect}
                     </h5>
                 </div>
                 <div className='product-description-flex'>
@@ -206,7 +228,7 @@ function ProductInformation(props) {
                         Công ty sản xuất:
                     </p>
                     <h5 className='text-lg font-bold text-gray-600 dark:text-white'>
-                        Syngenta
+                        {props.data.product_by}
                     </h5>
                 </div>
             </div>
@@ -220,16 +242,16 @@ function Business(props) {
             <div className='business-info-tab-1'>
                 <div>
                     <img
-                        src="https://media.istockphoto.com/photos/wild-grass-in-the-mountains-at-sunset-picture-id1322277517?k=20&m=1322277517&s=612x612&w=0&h=ZdxT3aGDGLsOAn3mILBS6FD7ARonKRHe_EKKa-V-Hws="
+                        src={props.data.user.image}
                         alt="store"
                     />
                 </div>
                 <div className='business-info-address'>
                     <p className='text-2xl font-bold text-gray-600 dark:text-white'>
-                        Cửa hàng Hoà Bình Thịnh Vượng
+                        {props.data.user.full_name}
                     </p>
                     <p className='text-mx font-bold text-gray-600 dark:text-white'>
-                        127/387 Nguyễn Trải, Hưng Lợi, Ninh Kiều, Cần Thơ
+                        {props.data.address}
                     </p>
                     <Link to="/store/1" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                         Xem cửa hàng
@@ -241,29 +263,29 @@ function Business(props) {
             <div className='business-info-tab-3'>
                 <div className='business-info-tab-3-left'>
                     <div className='display-flex'>
-                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                        <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
                         <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                            Đánh giá:
+                            Đánh giá: {props.data.rating}
                         </p>
                     </div>
                     <div className='display-flex'>
                         <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
                         <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                            Sản phẩm:
+                            Sản phẩm: {props.data.amount_product}
                         </p>
                     </div>
                 </div>
                 <div className='business-info-tab-3-right'>
                     <div className='display-flex'>
-                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                         <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                            Đã bán:
+                            Đã bán: {props.data.sold}
                         </p>
                     </div>
                     <div className='display-flex'>
                         <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                            Tham gia:
+                            Tham gia: {props.data.user.created.slice(0, 10)}
                         </p>
                     </div>
                 </div>

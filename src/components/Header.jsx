@@ -7,6 +7,7 @@ import { useState, useContext } from "react";
 import './Header.css'
 
 
+
 export default function Header(props) {
     const { user } = useContext(StoreContext)
     const handleSearch = (e) => {

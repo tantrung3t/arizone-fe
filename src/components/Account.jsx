@@ -1,8 +1,11 @@
+
 import { Avatar, Dropdown } from "flowbite-react";
 import { useMemo } from "react";
 import { useState, useContext } from "react";
 
 import { Link } from "react-router-dom";
+
+const HOST = process.env.REACT_APP_HOST
 
 export default function Account(props) {
     // const user = {
@@ -18,7 +21,7 @@ export default function Account(props) {
                 <Avatar
                     size="xs"
                     rounded={true}
-                    img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                    img={HOST + props.data.image}
                 />
             </div>
             <div className="account">

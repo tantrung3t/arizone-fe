@@ -2,102 +2,186 @@ import { useState, useEffect } from 'react';
 import './Business.css'
 import { Dropdown } from 'flowbite-react';
 import SideBarBusiness from '../components/SideBarBusiness';
+import axios from 'axios';
 
-const store = [
-    {
-        store_name: "hình",
-        email: "Sản phẩm 1",
-        phone: "",
-        status: "Active",
-        address: "Cửa hàng A"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 2",
-        phone: "",
-        status: "Pending",
-        address: "Cửa hàng A"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 3",
-        phone: "",
-        status: "Active",
-        address: "Cửa hàng B"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 4",
-        phone: "",
-        status: "Block",
-        address: "Cửa hàng A"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 5",
-        phone: "",
-        status: "Active",
-        address: "Cửa hàng B"
-    },
-    ,
-    {
-        store_name: "",
-        email: "Sản phẩm 2",
-        phone: "",
-        status: "Pending",
-        address: "Cửa hàng A"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 4",
-        phone: "",
-        status: "Block",
-        address: "Cửa hàng A"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 5",
-        phone: "",
-        status: "Active",
-        address: "Cửa hàng B"
-    }
-]
+const HOST = process.env.REACT_APP_HOST
 
 export default function BusinessProduct() {
     const [statusFilter, setStatusFilter] = useState("All")
     const [product, setProduct] = useState([])
     const [showListProduct, setShowListProduct] = useState("business-product")
     const [showAddProduct, setShowAddProduct] = useState("business-add-product hide")
+
+    const [next, setNext] = useState()
+    const [previous, setPrevious] = useState()
+
     const handleFilter = (e, status) => {
         console.log(status)
         if (status === "All") {
             setStatusFilter("All")
+            getListProduct()
         } else if (status === "Active") {
             setStatusFilter("Active")
+            loadDataFilterActive()
         } else if (status === "Block") {
-
             setStatusFilter("Block")
+            loadDataFilterBlock()
         } else {
             setStatusFilter("Pending")
+            loadDataFilterPending()
         }
     }
-    const handleSearch = (e) => {
+    const loadDataFilterActive = async () => {
+        
+        var config = {
+            method: 'get',
+            url: HOST + "/business/product/?is_active=true&is_block=false",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+    const loadDataFilterPending = async () => {
+        
+        var config = {
+            method: 'get',
+            url: HOST + "/business/product/?is_active=false&is_block=false",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+    const loadDataFilterBlock = async () => {
+        
+        var config = {
+            method: 'get',
+            url: HOST + "/business/product/?is_block=true",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
+    const loadNextPage = async () => {
+        
+        var config = {
+            method: 'get',
+            url: next,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
+    const loadPreviousPage = async () => {
+
+        
+        var config = {
+            method: 'get',
+            url: previous,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
+    const handleSearch = async (e) => {
         e.preventDefault()
         const dataSubmit = new FormData(e.currentTarget);
-        console.log(dataSubmit.get('search-product'))
+        var config = {
+            method: 'get',
+            url: HOST + "/business/product/?search=" + dataSubmit.get('search-product'),
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
     }
+
+    const getListProduct = async () => {
+        var config = {
+            method: 'get',
+            url: HOST + '/business/product/?ordering=-created_at',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setProduct(response.data.results)
+                setNext(response.data.next)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
     useEffect(() => {
-        setProduct(store)
+        getListProduct()
     }, [])
     const listProduct = () => {
-        let element = product.map((user, index) => {
+        let element = product.map((product, index) => {
             return <StoreUser key={index}
-                id={index}
-                store_name={user.store_name}
-                email={user.email}
-                phone={user.phone}
-                status={user.status}
-                address={user.address}
+                id={product.id}
+                name={product.name}
+                image={product.image}
+                is_block={product.is_block}
+                is_active={product.is_active}
+                sold={product.sold}
+                amount={product.amount}
+
             />
         })
         return element;
@@ -135,7 +219,7 @@ export default function BusinessProduct() {
                         </div>
                         <div className='business-filter'>
                             <Dropdown
-                                label={"Filter: " + statusFilter}
+                                label={"Bộ lọc: " + statusFilter}
                                 inline={true}>
                                 <h1 onClick={(e) => handleFilter(e, 'All')}>
                                     <Dropdown.Item>
@@ -188,10 +272,10 @@ export default function BusinessProduct() {
                         {listProduct()}
                     </div>
                     <div className='pagination'>
-                        <button type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <button onClick={loadPreviousPage} type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                             Trang trước
                         </button>
-                        <button type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <button onClick={loadNextPage} type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                             Trang kế
                         </button>
                     </div>
@@ -214,17 +298,17 @@ export default function BusinessProduct() {
 function StoreUser(props) {
     const [action, setAction] = useState("business-action-hide")
     const showStatus = () => {
-        if (props.status === "Active") {
-            return (
-                <p className='text-base font-semibold text-green-500 dark:text-gray-300'>
-                    Active
-                </p>
-            )
-        }
-        else if (props.status === "Block") {
+        if (props.is_block) {
             return (
                 <p className='text-base font-semibold text-red-500 dark:text-gray-300'>
                     Block
+                </p>
+            )
+        }
+        else if (props.is_active) {
+            return (
+                <p className='text-base font-semibold text-green-500 dark:text-gray-300'>
+                    Active
                 </p>
             )
         } else {
@@ -249,19 +333,19 @@ function StoreUser(props) {
         <div onClick={showDetail} className='business-product-store'>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
                 <img
-                    src="https://h5p.org/sites/default/files/h5p/content/1209180/images/file-6113d5f8845dc.jpeg"
+                    src={props.image}
                     alt="Flowbite Logo"
                 />
             </p>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
-                {props.email}
+                {props.name}
             </p>
             {showStatus()}
             <p className='text-sm font-semibold text-gray-600 dark:text-gray-300'>
-                12
+                {props.sold}
             </p>
             <p className='text-sm font-semibold text-gray-600 dark:text-gray-300'>
-                50
+                {props.amount}
             </p>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
                 <button onClick={showAction}>
@@ -276,24 +360,86 @@ function AddProduct() {
     const [image, setImage] = useState("");
     const [imageUpload, setImageUpload] = useState("")
     const [isUploaded, setIsUploaded] = useState(false);
-    const handleSubmit = (e) => {
+
+    const [category, setCategory] = useState([])
+    // <option value="1">Phân bón</option>
+    //                             <option value="2">Thuốc đặt trị</option>
+    //                             <option value="3">Thuốc kích thích</option>
+    //                             <option value="4">Chế phẩm sinh học</option>
+    //                             <option value="4">Vi sinh</option>
+
+    const loadCategory = async () => {
+        var config = {
+            method: 'get',
+            url: HOST + '/product/category/',
+            headers: {}
+        };
+
+        await axios(config)
+            .then(function (response) {
+                setCategory(response.data)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    }
+
+    const listCategory = () => {
+        let element = category.map((item, index) => {
+            return <option key={index} value={item.id}>
+                {item.name}
+            </option>
+        })
+        return element;
+    }
+
+    useEffect(() => {
+        loadCategory()
+    }, [])
+
+    const handleSubmit = async (e) => {
         console.log(imageUpload)
         e.preventDefault();
         let formData = new FormData();
-        formData.append('file', imageUpload);
+
         const dataSubmit = new FormData(e.currentTarget);
         let isActive = false
         if (dataSubmit.get('active') !== null) {
             isActive = true
         }
-        let data = {
-            "product_name": dataSubmit.get('product_name'),
-            "product_image": formData,
-            "category": dataSubmit.get('category'),
-            "description": dataSubmit.get('description'),
-            "active": isActive,
-        }
-        console.log(data)
+
+        formData.append('name', dataSubmit.get('product_name'));
+        formData.append('price', dataSubmit.get('price'));
+        formData.append('sale', dataSubmit.get('sale'));
+        formData.append('description', dataSubmit.get('description'));
+        formData.append('element', dataSubmit.get('element'));
+        formData.append('type', dataSubmit.get('type'));
+        formData.append('effect', dataSubmit.get('effect'));
+        formData.append('product_by', dataSubmit.get('company'));
+        formData.append('image', imageUpload);
+        formData.append('is_active', isActive);
+        formData.append('category', dataSubmit.get('category'));
+        formData.append('amount', dataSubmit.get('amount'));
+
+        var config = {
+            method: 'post',
+            url: HOST + '/business/product/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            },
+            data: formData
+        };
+
+        await axios(config)
+            .then(function (response) {
+                alert("Thêm thành công!")
+            })
+            .catch(function (error) {
+                console.log(error);
+                alert("Lỗi")
+            });
+
     }
     const handleImageChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -334,12 +480,7 @@ function AddProduct() {
                                 name="category"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             >
-                                <option defaultValue="0">Chọn</option>
-                                <option value="1">Phân bón</option>
-                                <option value="2">Thuốc đặt trị</option>
-                                <option value="3">Thuốc kích thích</option>
-                                <option value="4">Chế phẩm sinh học</option>
-                                <option value="4">Vi sinh</option>
+                                {listCategory()}
                             </select>
                         </div>
                     </div>
@@ -351,6 +492,7 @@ function AddProduct() {
                             <input
                                 type="text"
                                 id="company"
+                                name="company"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder=""
                             />
@@ -360,8 +502,9 @@ function AddProduct() {
                                 Số lượng tại cửa hàng
                             </label>
                             <input
-                                type="text"
-                                id="company"
+                                type="number"
+                                id="amount"
+                                name="amount"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder=""
                             />
@@ -373,8 +516,9 @@ function AddProduct() {
                                 Giá bán
                             </label>
                             <input
-                                type="text"
-                                id="company"
+                                type="number"
+                                id="price"
+                                name="price"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder=""
                             />
@@ -384,8 +528,9 @@ function AddProduct() {
                                 Giá khuyến mãi
                             </label>
                             <input
-                                type="text"
-                                id="company"
+                                type="number"
+                                id="sale"
+                                name="sale"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder=""
                             />
@@ -439,7 +584,8 @@ function AddProduct() {
                         Thành phần
                     </label>
                     <textarea
-                        id="message"
+                        id="element"
+                        name="element"
                         rows="4"
                         className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="">
@@ -451,12 +597,13 @@ function AddProduct() {
                         Dạng thuốc
                     </label>
                     <textarea
-                        id="message"
+                        id="type"
+                        name="type"
                         rows="4"
                         className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder=""
-                        >
-                    
+                    >
+
                     </textarea>
                 </div>
             </div>
@@ -473,7 +620,7 @@ function AddProduct() {
                         placeholder=""
                         defaultValue=""
                     >
-                        
+
                     </textarea>
                 </div>
                 <div className='business-add-product-textarea'>
@@ -481,7 +628,8 @@ function AddProduct() {
                         Cơ chế tác dộng
                     </label>
                     <textarea
-                        id="message"
+                        id="effect"
+                        name="effect"
                         rows="6"
                         className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="">

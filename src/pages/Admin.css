@@ -195,7 +195,7 @@
 .admin-user-store p:nth-child(5) {
     width: 36%;
 }
-.admin-user-store p:nth-child(6) {
+.admin-user-store .action {
     width: 4%;
 }
 
@@ -208,7 +208,7 @@
     background-color: #fff;
     width: 100px;
     height: 100px;
-    margin-left: -90px;
+    margin-left: -110px;
     margin-top: -70px;
     padding: 10px;
     border-radius: 5px;

@@ -51,11 +51,10 @@
     object-fit: cover;
     margin: auto;
     margin-bottom: 20px;
+    border-radius: 7px;
+    margin-top: 30px;
 }
 
-.product-detail-image img {
-    margin: auto;
-}
 
 .slide-image {
     display: flex;

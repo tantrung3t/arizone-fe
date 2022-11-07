@@ -2,78 +2,245 @@ import { useState, useEffect } from 'react';
 import './Admin.css'
 import { Dropdown } from 'flowbite-react';
 import SideBarAdmin from '../components/SideBarAdmin';
+import axios from 'axios';
 
-const store = [
-    {
-        store_name: "hình",
-        email: "Sản phẩm 1",
-        phone: "",
-        status: "Active",
-        address: "Cửa hàng A"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 2",
-        phone: "",
-        status: "Pending",
-        address: "Cửa hàng A"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 3",
-        phone: "",
-        status: "Active",
-        address: "Cửa hàng B"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 4",
-        phone: "",
-        status: "Block",
-        address: "Cửa hàng A"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 5",
-        phone: "",
-        status: "Active",
-        address: "Cửa hàng B"
-    },
-]
+const HOST = process.env.REACT_APP_HOST
 
 export default function AdminProduct() {
     const [statusFilter, setStatusFilter] = useState("All")
     const [product, setProduct] = useState([])
+    const [next, setNext] = useState()
+    const [present, setPresent] = useState(HOST + "/admin/user/list/")
+    const [previous, setPrevious] = useState()
     const handleFilter = (e, status) => {
         console.log(status)
         if (status === "All") {
             setStatusFilter("All")
+            loadData()
         } else if (status === "Active") {
             setStatusFilter("Active")
+            loadDataFilterActive()
         } else if (status === "Block") {
-
             setStatusFilter("Block")
+            loadDataFilterBlock()
         } else {
             setStatusFilter("Pending")
+            loadDataFilterPending()
         }
     }
-    const handleSearch = (e) => {
+    const loadDataFilterActive = async () => {
+        setPresent(HOST + "/admin/product/list/?is_active=true&is_block=false")
+        var config = {
+            method: 'get',
+            url: HOST + "/admin/product/list/?is_active=true&is_block=false",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+    const loadDataFilterPending = async () => {
+        setPresent(HOST + "/admin/product/list/?is_active=false&is_block=false")
+        var config = {
+            method: 'get',
+            url: HOST + "/admin/product/list/?is_active=false&is_block=false",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+    const loadDataFilterBlock = async () => {
+        setPresent(HOST + "/admin/product/list/?is_block=true")
+        var config = {
+            method: 'get',
+            url: HOST + "/admin/product/list/?is_block=true",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+    const handleSearch = async (e) => {
         e.preventDefault()
         const dataSubmit = new FormData(e.currentTarget);
-        console.log(dataSubmit.get('search-product'))
+        setPresent(HOST + "/admin/product/list/?ordering=-created_at&search=" + dataSubmit.get('search-product'))
+        var config = {
+            method: 'get',
+            url: HOST + "/admin/product/list/?ordering=-created_at&search=" + dataSubmit.get('search-product'),
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
+    const loadData = async () => {
+        setPresent(HOST + "/admin/product/list/?ordering=-created_at")
+        var config = {
+            method: 'get',
+            url: HOST + "/admin/product/list/?ordering=-created_at",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
+    const reloadPage = async () => {
+        console.log(present)
+        var config = {
+            method: 'get',
+            url: present,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
+    const loadNextPage = async () => {
+        setPresent(next)
+        var config = {
+            method: 'get',
+            url: next,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+    const loadPreviousPage = async () => {
+
+        setPresent(previous)
+        var config = {
+            method: 'get',
+            url: previous,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setProduct(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
+    const handleActive = async (id) => {
+        var data = JSON.stringify({
+            "is_active": true,
+            "business_status": "active"
+        });
+        var config = {
+            method: 'put',
+            url: HOST + '/admin/user/' + id + "/",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+        await axios(config)
+            .then(function (response) {
+                reloadPage()
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    }
+    const handleBlock = async (id) => {
+        var data = JSON.stringify({
+            "is_active": false
+        });
+        var config = {
+            method: 'put',
+            url: HOST + '/admin/user/' + id + "/",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+        await axios(config)
+            .then(function (response) {
+                reloadPage()
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
     useEffect(() => {
-        setProduct(store)
+        loadData()
     }, [])
     const listProduct = () => {
-        let element = product.map((user, index) => {
+        let element = product.map((item, index) => {
             return <StoreUser key={index}
-                id={index}
-                store_name={user.store_name}
-                email={user.email}
-                phone={user.phone}
-                status={user.status}
-                address={user.address}
+                id={item.id}
+                product_name={item.name}
+                image={item.image}
+                is_active={item.is_active}
+                is_block={item.is_block}
+                store_name={item.created_by.full_name}
             />
         })
         return element;
@@ -149,10 +316,10 @@ export default function AdminProduct() {
                         {listProduct()}
                     </div>
                     <div className='pagination'>
-                        <button type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <button onClick={loadPreviousPage} type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                             Trang trước
                         </button>
-                        <button type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <button onClick={loadNextPage} type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                             Trang kế
                         </button>
                     </div>
@@ -165,17 +332,17 @@ export default function AdminProduct() {
 function StoreUser(props) {
     const [action, setAction] = useState("admin-action-hide")
     const showStatus = () => {
-        if (props.status === "Active") {
-            return (
-                <p className='text-base font-semibold text-green-500 dark:text-gray-300'>
-                    Active
-                </p>
-            )
-        }
-        else if (props.status === "Block") {
+        if (props.is_block) {
             return (
                 <p className='text-base font-semibold text-red-500 dark:text-gray-300'>
                     Block
+                </p>
+            )
+        }
+        else if (props.is_active) {
+            return (
+                <p className='text-base font-semibold text-green-500 dark:text-gray-300'>
+                    Active
                 </p>
             )
         } else {
@@ -200,19 +367,19 @@ function StoreUser(props) {
         <div onClick={showDetail} className='admin-user-store'>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
                 <img
-                    src="https://h5p.org/sites/default/files/h5p/content/1209180/images/file-6113d5f8845dc.jpeg"
+                    src={props.image}
                     alt="Flowbite Logo"
                 />
             </p>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
-                {props.email}
+                {props.product_name}
             </p>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
                 {props.phone}
             </p>
             {showStatus()}
             <p className='text-sm font-semibold text-gray-600 dark:text-gray-300'>
-                {props.address}
+                {props.store_name}
             </p>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
                 <button onClick={showAction}>

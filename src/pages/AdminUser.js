@@ -3,99 +3,251 @@ import './Admin.css'
 import { Dropdown } from 'flowbite-react';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import axios from 'axios';
 const HOST = process.env.REACT_APP_HOST
-const store = [
-    {
-        store_name: "Trang thiết bi Hoà Bình",
-        email: "store1.dmv@host.com",
-        phone: "0312312311",
-        status: "Active",
-        address: "123 Nguyễn Văn Linh, Hưng Lợi, Ninh Kiều, Cần Thơ"
-    },
-    {
-        store_name: "Hoà Bình",
-        email: "store1@host.com",
-        phone: "03123123",
-        status: "Pending",
-        address: "123 Nguyễn Văn Linh, Hưng Lợi, Ninh Kiều, Cần Thơ"
-    },
-    {
-        store_name: "Hoà Bình",
-        email: "store1@host.com",
-        phone: "03123123",
-        status: "Active",
-        address: "Hưng Lợi, Ninh Kiều, Cần Thơ"
-    },
-    {
-        store_name: "Hoà Bình",
-        email: "store1@host.com",
-        phone: "03123123",
-        status: "Block",
-        address: "Hưng Lợi, Ninh Kiều, Cần Thơ"
-    },
-    {
-        store_name: "Hoà Bình",
-        email: "store1@host.com",
-        phone: "03123123",
-        status: "Active",
-        address: "Hưng Lợi, Ninh Kiều, Cần Thơ"
-    },
-]
 
 export default function AdminUser() {
     const [statusFilter, setStatusFilter] = useState("All")
     const [account, setAccount] = useState([])
+    const [next, setNext] = useState()
+    const [present, setPresent] = useState(HOST + "/admin/user/list/")
+    const [previous, setPrevious] = useState()
     const handleFilter = (e, status) => {
         console.log(status)
         if (status === "All") {
             setStatusFilter("All")
+            loadData()
         } else if (status === "Active") {
             setStatusFilter("Active")
+            loadDataFilterActive()
         } else if (status === "Block") {
             setStatusFilter("Block")
+            loadDataFilterBlock()
         } else {
             setStatusFilter("Pending")
+            loadDataFilterPending()
         }
     }
-    const handleSearch = (e) => {
-        e.preventDefault()
-        const dataSubmit = new FormData(e.currentTarget);
-        console.log(dataSubmit.get('search-user'))
-    }
-
-    const loadData = async() => {
+    const loadDataFilterActive = async () => {
+        setPresent(HOST + "/admin/user/list/?is_active=true&business_status=active")
         var config = {
             method: 'get',
-            url: HOST + "/admin/user/list/",
+            url: HOST + "/admin/user/list/?is_active=true&business_status=active",
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
             }
         };
         await axios(config)
             .then(function (response) {
-                
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setAccount(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+    const loadDataFilterPending = async () => {
+        setPresent(HOST + "/admin/user/list/?is_active=true&business_status=pending")
+        var config = {
+            method: 'get',
+            url: HOST + "/admin/user/list/?is_active=true&business_status=pending",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setAccount(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+    const loadDataFilterBlock = async () => {
+        setPresent(HOST + "/admin/user/list/?is_active=false")
+        var config = {
+            method: 'get',
+            url: HOST + "/admin/user/list/?is_active=false",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setAccount(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+    const handleSearch = async (e) => {
+        e.preventDefault()
+        const dataSubmit = new FormData(e.currentTarget);
+        setPresent(HOST + "/admin/user/list/?search=" + dataSubmit.get('search-user'))
+        var config = {
+            method: 'get',
+            url: HOST + "/admin/user/list/?search=" + dataSubmit.get('search-user'),
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(HOST + "/admin/user/list/?search=" + dataSubmit.get('search-user'))
+                setAccount(response.data.results)
             })
             .catch(function (error) {
 
             });
     }
 
+    const loadData = async () => {
+        setPresent(HOST + "/admin/user/list/?ordering=-date_joined")
+        var config = {
+            method: 'get',
+            url: HOST + "/admin/user/list/?ordering=-date_joined",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(HOST + "/admin/user/list/?ordering=-date_joined")
+                setAccount(response.data.results)
+            })
+            .catch(function (error) {
+                
+            });
+    }
+
+    const reloadPage = async () => {
+        console.log(present)
+        var config = {
+            method: 'get',
+            url: present,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setAccount(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
+    const loadNextPage = async () => {
+        setPresent(next)
+        var config = {
+            method: 'get',
+            url: next,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setAccount(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+    const loadPreviousPage = async () => {
+
+        setPresent(previous)
+        var config = {
+            method: 'get',
+            url: previous,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+                setAccount(response.data.results)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
+    const handleActive = async (id) => {
+        var data = JSON.stringify({
+            "is_active": true,
+            "business_status": "active"
+        });
+        var config = {
+            method: 'put',
+            url: HOST + '/admin/user/' + id + "/",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+        await axios(config)
+            .then(function (response) {
+                reloadPage()
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    }
+    const handleBlock = async (id) => {
+        var data = JSON.stringify({
+            "is_active": false
+        });
+        var config = {
+            method: 'put',
+            url: HOST + '/admin/user/' + id + "/",
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+        await axios(config)
+            .then(function (response) {
+                reloadPage()
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
     useEffect(() => {
-        setAccount(store)
+        loadData()
     }, [])
     const listStore = () => {
         let element = account.map((user, index) => {
             return <StoreUser key={index}
-                id={index}
-                store_name={user.store_name}
-                email={user.email}
-                phone={user.phone}
-                status={user.status}
-                address={user.address}
+                data={user}
+                handleActive={(id) => { handleActive(id) }}
+                handleBlock={(id) => { handleBlock(id) }}
+
             />
         })
         return element;
     }
+
+
+
     return (
         <div>
             <div className='display-flex'>
@@ -167,10 +319,10 @@ export default function AdminUser() {
                         {listStore()}
                     </div>
                     <div className='pagination'>
-                        <button type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <button onClick={loadPreviousPage} type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                             Trang trước
                         </button>
-                        <button type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <button onClick={loadNextPage} type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                             Trang kế
                         </button>
                     </div>
@@ -183,17 +335,17 @@ export default function AdminUser() {
 function StoreUser(props) {
     const [action, setAction] = useState("admin-action-hide")
     const showStatus = () => {
-        if (props.status === "Active") {
-            return (
-                <p className='text-base font-semibold text-green-500 dark:text-gray-300'>
-                    Active
-                </p>
-            )
-        }
-        else if (props.status === "Block") {
+        if (props.data.is_active === false) {
             return (
                 <p className='text-base font-semibold text-red-500 dark:text-gray-300'>
                     Block
+                </p>
+            )
+        }
+        else if (props.data.business_status === "active") {
+            return (
+                <p className='text-base font-semibold text-green-500 dark:text-gray-300'>
+                    Active
                 </p>
             )
         } else {
@@ -204,9 +356,6 @@ function StoreUser(props) {
             )
         }
     }
-    const showDetail = () => {
-        console.log(props.id)
-    }
     const showAction = () => {
         if (action === "admin-action-hide") {
             setAction("admin-action")
@@ -214,34 +363,42 @@ function StoreUser(props) {
             setAction("admin-action-hide")
         }
     }
+    const handleActive = () => {
+        showAction()
+        props.handleActive(props.data.id)
+    }
+    const handleBlock = () => {
+        showAction()
+        props.handleBlock(props.data.id)
+    }
     return (
-        <div onClick={showDetail} className='admin-user-store'>
+        <div className='admin-user-store'>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
-                {props.store_name}
+                {props.data.full_name}
             </p>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
-                {props.email}
+                {props.data.email}
             </p>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
-                {props.phone}
+                {props.data.phone}
             </p>
             {showStatus()}
             <p className='text-sm font-semibold text-gray-600 dark:text-gray-300'>
-                {props.address}
+                {props.data.business.address}
             </p>
-            <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
-                <button onClick={showAction}>
+            <div className='action text-base font-semibold text-gray-600 dark:text-gray-300'>
+                <button onClick={showAction} className="mt-5">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
                 </button>
                 <div className={action}>
-                    <button type="button" className="text-green-500 bg-white hover:bg-gray-200 font-medium rounded-sm text-sm  py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    <button onClick={handleActive} type="button" className="text-green-500 bg-white hover:bg-gray-200 font-medium rounded-sm text-sm  py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                         Active
                     </button>
-                    <button type="button" className="text-red-500 bg-white hover:bg-gray-200 font-medium rounded-sm text-sm  py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    <button onClick={handleBlock} type="button" className="text-red-500 bg-white hover:bg-gray-200 font-medium rounded-sm text-sm  py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                         Block
                     </button>
                 </div>
-            </p>
+            </div>
         </div>
     )
 }

@@ -1,6 +1,7 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Button, Carousel } from 'flowbite-react';
 import { StoreContext } from '../store/store';
+import axios from 'axios';
 import Header from '../components/Header';
 import AppFooter from '../components/Footer';
 import CardProduct from '../components/CardProduct';
@@ -44,19 +45,22 @@ const apiProduct = [
     },
 ]
 
+const HOST = process.env.REACT_APP_HOST
+
 export default function Home() {
 
     const { cart, setCart } = useContext(StoreContext)
     const [productSale, setProductSale] = useState(apiProduct)
-    const [products, setProducts] = useState(apiProduct)
+    const [products, setProducts] = useState([])
+    const [next, setNext] = useState()
 
     const listProductSale = () => {
         let element = productSale.map((product, index) => {
             return <CardProduct key={index}
-                product_name = {product.product_name}
-                image = {product.image}
-                price = {product.price}
-                sale = {product.sale}
+                product_name={product.product_name}
+                image={product.image}
+                price={product.price}
+                sale={product.sale}
             />
         })
         return element;
@@ -65,18 +69,56 @@ export default function Home() {
     const listProduct = () => {
         let element = products.map((product, index) => {
             return <CardProduct key={index}
-                product_name = {product.product_name}
-                image = {product.image}
-                price = {product.price}
-                sale = {product.sale}
+                id={product.id}
+                product_name={product.name}
+                image={product.image}
+                price={product.price}
+                sale={product.sale}
+                average_rating={product.average_rating}
             />
         })
         return element;
     }
 
-    const viewMoreProduct = () => {
-        setProducts(products => products.concat(apiProduct))
+    const viewMoreProduct = async () => {
+        var config = {
+            method: 'get',
+            url: next,
+            headers: {
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setProducts(products => products.concat(response.data.results))
+                setNext(response.data.next)
+            })
+            .catch(function (error) {
+                console.log(error)
+            });
     }
+
+    const getProduct = async () => {
+        var config = {
+            method: 'get',
+            url: HOST + '/product/list/',
+            headers: {
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setProducts(response.data.results)
+                setNext(response.data.next)
+            })
+            .catch(function (error) {
+
+            });
+    }
+
+
+    useEffect(() => {
+        getProduct()
+    }, [])
+
 
     return (
         <div>
@@ -152,7 +194,6 @@ export default function Home() {
                             Tất cả sản phẩm
                         </p>
                         <div className='home-best-seller-product'>
-                            {listProductSale()}
                             {listProduct()}
                         </div>
 

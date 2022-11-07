@@ -33,7 +33,8 @@ function App() {
   const [user, setUser] = useState(
     {
       permission: null,
-      full_name: null
+      full_name: null,
+      image: null
     }
   )
   const [cart, setCart] = useState(0)
@@ -43,7 +44,7 @@ function App() {
     }
     var config = {
       method: 'post',
-      url: 'http://127.0.0.1:8000/refresh-token/',
+      url: HOST + '/refresh-token/',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -69,8 +70,8 @@ function App() {
     };
     await axios(config)
       .then(function (response) {
-        localStorage.setItem("role", response.data.permission)
         if (response.data.permission === "customer") {
+          localStorage.setItem("role", "ctm")
           setUser(response.data)
         }
       })
@@ -95,13 +96,13 @@ function App() {
           <Route path='/' component={Guest}>
           </Route>
           <Route path='/customer' render={() => {
-            return (localStorage.getItem("role") === "customer") ? <Customer /> : <Login />
+            return (localStorage.getItem("role") === "ctm") ? <Customer /> : <Login />
           }} />
           <Route path='/admin' render={() => {
-            return (localStorage.getItem("role") === "admin") ? <Admin /> : <Login />
+            return (localStorage.getItem("role") === "adm") ? <Admin /> : <Login />
           }} />
           <Route path='/business' render={() => {
-            return (localStorage.getItem("role") === "business") ? <Business /> : <Login />
+            return (localStorage.getItem("role") === "bsn") ? <Business /> : <Login />
           }} />
         </Router>
       </StoreContext.Provider>
