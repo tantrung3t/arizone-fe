@@ -3,6 +3,10 @@ import './Business.css'
 import { Dropdown } from 'flowbite-react';
 import SideBarBusiness from '../components/SideBarBusiness';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { getToken } from './Refresh';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const HOST = process.env.REACT_APP_HOST
 
@@ -18,21 +22,21 @@ export default function BusinessProduct() {
     const handleFilter = (e, status) => {
         console.log(status)
         if (status === "All") {
-            setStatusFilter("All")
+            setStatusFilter("Tất cả")
             getListProduct()
         } else if (status === "Active") {
-            setStatusFilter("Active")
+            setStatusFilter("Kích hoạt")
             loadDataFilterActive()
         } else if (status === "Block") {
-            setStatusFilter("Block")
+            setStatusFilter("Bị khoá")
             loadDataFilterBlock()
         } else {
-            setStatusFilter("Pending")
+            setStatusFilter("Chưa kích hoạt")
             loadDataFilterPending()
         }
     }
     const loadDataFilterActive = async () => {
-        
+
         var config = {
             method: 'get',
             url: HOST + "/business/product/?is_active=true&is_block=false",
@@ -51,7 +55,7 @@ export default function BusinessProduct() {
             });
     }
     const loadDataFilterPending = async () => {
-        
+
         var config = {
             method: 'get',
             url: HOST + "/business/product/?is_active=false&is_block=false",
@@ -70,7 +74,7 @@ export default function BusinessProduct() {
             });
     }
     const loadDataFilterBlock = async () => {
-        
+
         var config = {
             method: 'get',
             url: HOST + "/business/product/?is_block=true",
@@ -90,7 +94,7 @@ export default function BusinessProduct() {
     }
 
     const loadNextPage = async () => {
-        
+
         var config = {
             method: 'get',
             url: next,
@@ -111,7 +115,7 @@ export default function BusinessProduct() {
 
     const loadPreviousPage = async () => {
 
-        
+
         var config = {
             method: 'get',
             url: previous,
@@ -126,7 +130,16 @@ export default function BusinessProduct() {
                 setProduct(response.data.results)
             })
             .catch(function (error) {
+                getToken()
 
+                axios(config)
+                    .then(function (response) {
+                        setNext(response.data.next)
+                        setPrevious(response.data.previous)
+                        setProduct(response.data.results)
+                    })
+                    .catch(function (error) {
+                    });
             });
     }
 
@@ -146,7 +159,7 @@ export default function BusinessProduct() {
                 setProduct(response.data.results)
             })
             .catch(function (error) {
-
+                getToken()
             });
     }
 
@@ -164,7 +177,16 @@ export default function BusinessProduct() {
                 setNext(response.data.next)
             })
             .catch(function (error) {
+                getToken()
 
+                axios(config)
+                    .then(function (response) {
+                        setProduct(response.data.results)
+                        setNext(response.data.next)
+                    })
+                    .catch(function (error) {
+                        getToken()
+                    });
             });
     }
 
@@ -193,6 +215,7 @@ export default function BusinessProduct() {
     const cancelAddProduct = () => {
         setShowListProduct("business-product")
         setShowAddProduct("business-add-product hide")
+        getListProduct()
     }
     return (
         <div>
@@ -223,22 +246,22 @@ export default function BusinessProduct() {
                                 inline={true}>
                                 <h1 onClick={(e) => handleFilter(e, 'All')}>
                                     <Dropdown.Item>
-                                        <p>All</p>
+                                        <p>Tất cả</p>
                                     </Dropdown.Item>
                                 </h1>
                                 <h1 onClick={(e) => handleFilter(e, 'Active')}>
                                     <Dropdown.Item>
-                                        <p>Active</p>
+                                        <p>Kích hoạt</p>
                                     </Dropdown.Item>
                                 </h1>
                                 <h1 onClick={(e) => handleFilter(e, 'Block')}>
                                     <Dropdown.Item>
-                                        <p>Block</p>
+                                        <p>Bị khoá</p>
                                     </Dropdown.Item>
                                 </h1>
                                 <h1 onClick={(e) => handleFilter(e, 'Pending')}>
                                     <Dropdown.Item>
-                                        <p>Pending</p>
+                                        <p>Chưa kích hoạt</p>
                                     </Dropdown.Item>
                                 </h1>
                             </Dropdown>
@@ -301,20 +324,20 @@ function StoreUser(props) {
         if (props.is_block) {
             return (
                 <p className='text-base font-semibold text-red-500 dark:text-gray-300'>
-                    Block
+                    Bị khoá
                 </p>
             )
         }
         else if (props.is_active) {
             return (
                 <p className='text-base font-semibold text-green-500 dark:text-gray-300'>
-                    Active
+                    Kích hoạt
                 </p>
             )
         } else {
             return (
                 <p className='text-base font-semibold text-blue-500 dark:text-gray-300'>
-                    Pending
+                    Chưa kích hoạt
                 </p>
             )
         }
@@ -330,7 +353,7 @@ function StoreUser(props) {
         }
     }
     return (
-        <div onClick={showDetail} className='business-product-store'>
+        <div className='business-product-store'>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
                 <img
                     src={props.image}
@@ -347,10 +370,12 @@ function StoreUser(props) {
             <p className='text-sm font-semibold text-gray-600 dark:text-gray-300'>
                 {props.amount}
             </p>
-            <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
-                <button onClick={showAction}>
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg>
-                </button>
+            <p>
+                <Link to={"/business/product/" + props.id} className='text-base font-semibold text-gray-600 dark:text-gray-300 hover:text-blue-700'>
+                    <button onClick={showAction}>
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg>
+                    </button>
+                </Link>
             </p>
         </div>
     )
@@ -433,14 +458,36 @@ function AddProduct() {
 
         await axios(config)
             .then(function (response) {
-                alert("Thêm thành công!")
+                toastSuccess()
             })
             .catch(function (error) {
                 console.log(error);
-                alert("Lỗi")
+                toastError()
             });
 
     }
+
+    const toastSuccess = () => toast.success('Đã thêm sản phẩm!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+    });;
+
+    const toastError = () => toast.error('Lỗi rồi, thử lại sau nhé!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+    });
     const handleImageChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             let reader = new FileReader();
@@ -456,6 +503,18 @@ function AddProduct() {
     }
     return (
         <form onSubmit={handleSubmit}>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <div className='display-flex-only'>
                 <div className='business-add-info-product'>
                     <div className='display-flex-only'>

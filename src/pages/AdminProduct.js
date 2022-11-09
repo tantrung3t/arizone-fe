@@ -3,11 +3,12 @@ import './Admin.css'
 import { Dropdown } from 'flowbite-react';
 import SideBarAdmin from '../components/SideBarAdmin';
 import axios from 'axios';
+import { getToken } from './Refresh';
 
 const HOST = process.env.REACT_APP_HOST
 
 export default function AdminProduct() {
-    const [statusFilter, setStatusFilter] = useState("All")
+    const [statusFilter, setStatusFilter] = useState("Tất cả")
     const [product, setProduct] = useState([])
     const [next, setNext] = useState()
     const [present, setPresent] = useState(HOST + "/admin/user/list/")
@@ -15,16 +16,16 @@ export default function AdminProduct() {
     const handleFilter = (e, status) => {
         console.log(status)
         if (status === "All") {
-            setStatusFilter("All")
+            setStatusFilter("Tất cả")
             loadData()
         } else if (status === "Active") {
-            setStatusFilter("Active")
+            setStatusFilter("Kích hoạt")
             loadDataFilterActive()
         } else if (status === "Block") {
-            setStatusFilter("Block")
+            setStatusFilter("Bị khoá")
             loadDataFilterBlock()
         } else {
-            setStatusFilter("Pending")
+            setStatusFilter("Chưa kích hoạt")
             loadDataFilterPending()
         }
     }
@@ -121,12 +122,19 @@ export default function AdminProduct() {
                 setProduct(response.data.results)
             })
             .catch(function (error) {
+                getToken()
+                axios(config)
+                    .then(function (response) {
+                        setNext(response.data.next)
+                        setProduct(response.data.results)
+                    })
+                    .catch(function (error) {
 
+                    });
             });
     }
 
     const reloadPage = async () => {
-        console.log(present)
         var config = {
             method: 'get',
             url: present,
@@ -185,14 +193,13 @@ export default function AdminProduct() {
             });
     }
 
-    const handleActive = async (id) => {
+    const handleLock = async (id) => {
         var data = JSON.stringify({
-            "is_active": true,
-            "business_status": "active"
+            "is_block": true,
         });
         var config = {
             method: 'put',
-            url: HOST + '/admin/user/' + id + "/",
+            url: HOST + '/admin/product/update/' + id + "/",
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
                 'Content-Type': 'application/json'
@@ -208,13 +215,13 @@ export default function AdminProduct() {
             });
 
     }
-    const handleBlock = async (id) => {
+    const handleUnlock = async (id) => {
         var data = JSON.stringify({
-            "is_active": false
+            "is_block": false
         });
         var config = {
             method: 'put',
-            url: HOST + '/admin/user/' + id + "/",
+            url: HOST + '/admin/product/update/' + id + "/",
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
                 'Content-Type': 'application/json'
@@ -241,6 +248,8 @@ export default function AdminProduct() {
                 is_active={item.is_active}
                 is_block={item.is_block}
                 store_name={item.created_by.full_name}
+                handleLock={(id) => { handleLock(id) }}
+                handleUnlock={(id) => { handleUnlock(id) }}
             />
         })
         return element;
@@ -271,22 +280,22 @@ export default function AdminProduct() {
                                 inline={true}>
                                 <h1 onClick={(e) => handleFilter(e, 'All')}>
                                     <Dropdown.Item>
-                                        <p>All</p>
+                                        <p>Tất cả</p>
                                     </Dropdown.Item>
                                 </h1>
                                 <h1 onClick={(e) => handleFilter(e, 'Active')}>
                                     <Dropdown.Item>
-                                        <p>Active</p>
+                                        <p>Kích hoạt</p>
                                     </Dropdown.Item>
                                 </h1>
                                 <h1 onClick={(e) => handleFilter(e, 'Block')}>
                                     <Dropdown.Item>
-                                        <p>Block</p>
+                                        <p>Bị khoá</p>
                                     </Dropdown.Item>
                                 </h1>
                                 <h1 onClick={(e) => handleFilter(e, 'Pending')}>
                                     <Dropdown.Item>
-                                        <p>Pending</p>
+                                        <p>Chưa kích hoạt</p>
                                     </Dropdown.Item>
                                 </h1>
                             </Dropdown>
@@ -335,20 +344,20 @@ function StoreUser(props) {
         if (props.is_block) {
             return (
                 <p className='text-base font-semibold text-red-500 dark:text-gray-300'>
-                    Block
+                    Bị khoá
                 </p>
             )
         }
         else if (props.is_active) {
             return (
                 <p className='text-base font-semibold text-green-500 dark:text-gray-300'>
-                    Active
+                    Kích hoạt
                 </p>
             )
         } else {
             return (
                 <p className='text-base font-semibold text-blue-500 dark:text-gray-300'>
-                    Pending
+                    Chưa kích hoạt
                 </p>
             )
         }
@@ -362,6 +371,15 @@ function StoreUser(props) {
         } else {
             setAction("admin-action-hide")
         }
+    }
+
+    const handleLock = () => {
+        showAction()
+        props.handleLock(props.id)
+    }
+    const handleUnlock = () => {
+        showAction()
+        props.handleUnlock(props.id)
     }
     return (
         <div onClick={showDetail} className='admin-user-store'>
@@ -386,11 +404,11 @@ function StoreUser(props) {
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
                 </button>
                 <div className={action}>
-                    <button type="button" className="text-green-500 bg-white hover:bg-gray-200 font-medium rounded-sm text-sm  py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                        Active
+                    <button onClick={handleUnlock} type="button" className="text-green-500 bg-white hover:bg-gray-200 font-medium rounded-sm text-sm  py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        Mở khoá
                     </button>
-                    <button type="button" className="text-red-500 bg-white hover:bg-gray-200 font-medium rounded-sm text-sm  py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                        Block
+                    <button onClick={handleLock} type="button" className="text-red-500 bg-white hover:bg-gray-200 font-medium rounded-sm text-sm  py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        Khoá
                     </button>
                 </div>
             </p>

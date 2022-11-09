@@ -18,11 +18,22 @@ export default function Account(props) {
     return (
         <>
             <div className="avatar">
-                <Avatar
-                    size="xs"
-                    rounded={true}
-                    img={HOST + props.data.image}
-                />
+                {
+                    props.data.image ? (
+                        <Avatar
+                            size="xs"
+                            rounded={true}
+                            img={HOST + props.data.image}
+                        />
+                    ) : (
+                        <Avatar
+                            size="xs"
+                            rounded={true}
+                            img=""
+                        />
+                    )
+                }
+
             </div>
             <div className="account">
                 <Dropdown

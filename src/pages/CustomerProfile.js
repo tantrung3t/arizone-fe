@@ -1,7 +1,7 @@
 import Header from '../components/Header';
 import AppFooter from '../components/Footer';
 import './CustomerProfile.css'
-import user from '../image/user-image.png'
+import user from '../image/none_user.jpg'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -47,8 +47,13 @@ export default function CustomerProfile() {
         };
         await axios(config)
             .then(function (response) {
+                console.log(response.data)
                 setProfile(response.data)
-                setImage(HOST + response.data.image)
+                if(response.data.image === null){
+                    setImage("")
+                }else{
+                    setImage(HOST + response.data.image)
+                }
                 if (response.data.sex === "male") {
                     setMaleCheck(true)
                     setFemaleCheck(false)
@@ -169,7 +174,7 @@ export default function CustomerProfile() {
                                         />
                                     </label>
                                 </div>
-                                {profile.image
+                                {image
                                     ? <img
                                         src={image}
                                         alt="store"

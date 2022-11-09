@@ -16,6 +16,7 @@
 
 .business-filter{
     width: 200px;
+    margin-top: 15px;
 }
 
 .business-container {
@@ -281,6 +282,16 @@
     width: 50%;
     margin-right: 10px;
 }
+
+.business-add-product-button{
+    margin-top: 10px;
+}
+
+.business-layout-button{
+    display: flex;
+    justify-content: center;
+}
+
 .business-add-product-button-form{
     display: flex;
     justify-content: center;
