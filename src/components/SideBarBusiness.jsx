@@ -1,12 +1,47 @@
 import { Link } from 'react-router-dom'
 import logo from '../image/logo.svg'
+import { ToastContainer, toast } from 'react-toastify';
+import { fetchToken, onMessageListener } from '../firebase';
+import { useState } from 'react';
+
 export default function SideBarBusiness(props) {
     const handleLogOut = () => {
         localStorage.clear()
-        window.location.replace("/login")
+        window.location.replace("/")
     }
+
+    const [isTokenFound, setTokenFound] = useState(false);
+    fetchToken(setTokenFound);
+    onMessageListener().then(payload => {
+        console.log(payload);
+        toastNotification()
+    }).catch(err => console.log('failed: ', err));
+
+    const toastNotification = () => toast.info('Bạn có đơn hàng mới!', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
+
     return (
         <div>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <aside className="w-64 admin-sidebar" aria-label="Sidebar">
                 <div className='admin-account'>
                     <img

@@ -7,64 +7,39 @@ import { StoreContext } from '../store/store';
 import { useEffect, useState, useContext, useRef } from 'react';
 import { Avatar } from 'flowbite-react';
 import { Link } from 'react-router-dom';
-
-const dataProduct = [
-    {
-        "business": "Cửa hàng A",
-        "products": [
-            {
-                "name": "Thuốc trừ bệnh Help 25WG",
-                "thumbnail": "https://media.istockphoto.com/photos/wild-grass-in-the-mountains-at-sunset-picture-id1322277517?k=20&m=1322277517&s=612x612&w=0&h=ZdxT3aGDGLsOAn3mILBS6FD7ARonKRHe_EKKa-V-Hws=",
-                "price": 400000,
-                "sale": 0,
-                "amount": 3
-            },
-            {
-                "name": "Thuốc trừ bệnh Actara 25WG",
-                "thumbnail": "https://media.istockphoto.com/photos/wild-grass-in-the-mountains-at-sunset-picture-id1322277517?k=20&m=1322277517&s=612x612&w=0&h=ZdxT3aGDGLsOAn3mILBS6FD7ARonKRHe_EKKa-V-Hws=",
-                "price": 200000,
-                "sale": 150000,
-                "amount": 2
-            },
-        ]
-    },
-    {
-        "business": "Cửa hàng B",
-        "products": [
-            {
-                "name": "Thuốc Help 25WG",
-                "thumbnail": "https://media.istockphoto.com/photos/wild-grass-in-the-mountains-at-sunset-picture-id1322277517?k=20&m=1322277517&s=612x612&w=0&h=ZdxT3aGDGLsOAn3mILBS6FD7ARonKRHe_EKKa-V-Hws=",
-                "price": 400000,
-                "sale": 350000,
-                "amount": 3
-            },
-            {
-                "name": "Thuốc Actara 25WG",
-                "thumbnail": "https://media.istockphoto.com/photos/wild-grass-in-the-mountains-at-sunset-picture-id1322277517?k=20&m=1322277517&s=612x612&w=0&h=ZdxT3aGDGLsOAn3mILBS6FD7ARonKRHe_EKKa-V-Hws=",
-                "price": 200000,
-                "sale": 150000,
-                "amount": 2
-            },
-        ]
-    }
-]
+import axios from 'axios';
 
 export default function Cart(props) {
-    const [data, setData] = useState()
+    const { cart } = useContext(StoreContext)
+    const [data, setData] = useState([])
     useEffect(() => {
         window.scrollTo(0, 0)
-        setData(dataProduct)
+        loadCart()
     }, [])
     const listCart = () => {
-        if (data) {
-            let element = data.map((data, index) => {
-                return <CartByStore key={index}
-                    data={data}
-                />
+        let element = data.map((data, index) => {
+            return <CartByStore key={index}
+                data={data}
+            />
+        })
+        return element;
+    }
+    const loadCart = async () => {
+        var config = {
+            method: 'get',
+            url: process.env.REACT_APP_HOST + '/cart/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+
+        await axios(config)
+            .then(function (response) {
+                setData(response.data)
             })
-            return element;
-        }
-        return <div></div>
+            .catch(function (error) {
+                console.log(error);
+            });
     }
     return (
         <div>
@@ -73,7 +48,8 @@ export default function Cart(props) {
             </header>
             <main>
                 <div className='body-container'>
-                    <div className='cart-container'>
+
+                    {cart ? (<div className='cart-container'>
                         <p className='p-5 text-3xl font-bold text-gray-600 dark:text-white'>
                             Giỏ hàng
                         </p>
@@ -108,6 +84,11 @@ export default function Cart(props) {
                             {listCart()}
                         </div>
                     </div>
+                    ) : (
+                        <div>Khong co</div>
+                    )
+                    }
+
                 </div>
             </main>
             <footer>
@@ -122,12 +103,12 @@ function CartByStore(props) {
     const data = props.data
     useEffect(() => {
         let sum = 0
-        data.products.map((product) => {
-            if(product.sale){
-                sum += (product.sale * product.amount)
+        data.cart_detail.map((product) => {
+            if (product.product.sale) {
+                sum += (product.product.sale * product.quantity)
             }
-            else{
-                sum +=  (product.price * product.amount)
+            else {
+                sum += (product.product.price * product.quantity)
             }
             return true
         })
@@ -138,7 +119,7 @@ function CartByStore(props) {
     }
     const listProduct = () => {
         if (data) {
-            let element = data.products.map((product, index) => {
+            let element = data.cart_detail.map((product, index) => {
                 return <Product key={index}
                     product={product}
                     sumCartTotal={(before_total, after_total) => { sumCartTotal(before_total, after_total) }}
@@ -150,8 +131,10 @@ function CartByStore(props) {
     }
     return (
         <div className='cart-by-store'>
-            <p className='p-5 text-xl font-bold text-gray-600 dark:text-white'>
-                {data.business}
+            <p className='p-5 text-xl font-bold text-gray-600 dark:text-white hover:text-blue-600'>
+                <Link to={'/store/' + data.business.id}>
+                    {data.business.user.full_name}
+                </Link>
             </p>
             {listProduct()}
             <div className='cart-check-out'>
@@ -173,15 +156,16 @@ function CartByStore(props) {
 
 function Product(props) {
     const product = props.product
-    const [value, setValue] = useState(props.product.amount)
+
+    const [value, setValue] = useState(product.quantity)
     const [price, setPrice] = useState(0)
 
     useEffect(() => {
-        if (product.sale) {
-            setPrice(product.sale)
+        if (product.product.sale) {
+            setPrice(product.product.sale)
         }
         else {
-            setPrice(product.price)
+            setPrice(product.product.price)
         }
     }, [product])
 
@@ -216,14 +200,14 @@ function Product(props) {
 
     }
     const showPrice = () => {
-        if (product.sale) {
+        if (product.product.sale) {
             return (
                 <>
                     <p className='text-lg font-semibold text-gray-600 line-through dark:text-white'>
-                        {product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
+                        {product.product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
                     </p>
                     <p className='text-lg font-semibold text-red-600 dark:text-white'>
-                        {product.sale.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
+                        {product.product.sale.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
                     </p>
                 </>
             )
@@ -231,7 +215,7 @@ function Product(props) {
         return (
             <>
                 <p className='text-lg font-semibold text-gray-600 dark:text-white'>
-                    {product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
+                    {product.product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
                 </p>
             </>
         )
@@ -241,11 +225,11 @@ function Product(props) {
         <div className='cart-product-in-store'>
             <div className='cart-title-product'>
                 <img
-                    src={product.thumbnail}
+                    src={product.product.image}
                     alt="store"
                 />
                 <p className='p-5 text-lg font-semibold text-gray-900 dark:text-white'>
-                    {product.name}
+                    {product.product.name}
                 </p>
             </div>
             <div className='cart-title-price'>

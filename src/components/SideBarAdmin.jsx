@@ -3,7 +3,7 @@ import logo from '../image/logo.svg'
 export default function SideBarAdmin(props) {
     const handleLogOut = () => {
         localStorage.clear()
-        window.location.replace("/login")
+        window.location.replace("/")
     }
     return (
         <div>

@@ -61,6 +61,24 @@ function App() {
       });
 
   }
+
+  const getCart = async () => {
+    var config = {
+      method: 'get',
+      url: HOST + '/cart/amount/',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+      }
+    };
+    await axios(config)
+      .then(function (response) {
+        setCart(response.data.amount)
+      })
+      .catch(function (error) {
+
+      });
+  }
+
   const getUser = async () => {
     var config = {
       method: 'get',
@@ -84,6 +102,7 @@ function App() {
   useEffect(() => {
     getToken()
     getUser()
+    getCart()
   }, [])
 
   return (

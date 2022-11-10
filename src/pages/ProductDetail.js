@@ -8,6 +8,7 @@ import { useEffect, useState, useContext, useRef } from 'react';
 import { Avatar } from 'flowbite-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
 const HOST = process.env.REACT_APP_HOST
 
@@ -73,11 +74,23 @@ export default function ProductDetail(props) {
             </header>
             <main>
                 <div className='body-container'>
-                    <Product data={data} />
-                    <Business data={data.business} />
-                    <ProductInformation data={data} />
-                    {/* <ProductRecommend /> */}
-                    <Review />
+                    {
+                        data.name ? (
+                            <>
+                                <Product data={data} id={props.id} />
+                                <Business data={data.business} />
+                                <ProductInformation data={data} />
+                                {/* <ProductRecommend /> */}
+                                <Review />
+                            </>
+                        ) : (
+                            <>
+                            <div>
+                                404 not found
+                            </div>
+                            </>
+                        )
+                    }
                 </div>
             </main>
             <footer>
@@ -123,10 +136,61 @@ function Product(props) {
 
     const handleAddToCart = () => {
         setCart(cart + value)
+        addCartAPI()
     }
+
+    const addCartAPI = () => {
+        var data = {
+            "product": props.id,
+            "quantity": value
+        };
+        var config = {
+            method: 'post',
+            url: HOST + '/cart/add/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            },
+            data: data
+        };
+
+        axios(config)
+            .then(function (response) {
+                setTimeout(() => {
+                    toastSuccess()
+                })
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    const toastSuccess = () => toast.success('Đã thêm sản phẩm vào giỏ!', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+    });
+
+
 
     return (
         <div className='product-container'>
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <div className='product-detail-image'>
                 <img className='product-image'
                     src={props.data.image}
@@ -143,7 +207,7 @@ function Product(props) {
                     </p>
                     <div className='product-detail-reviews-amount'>
                         <div className='product-detail-star'>
-                            <StartRating />
+                            <StartRating rating={props.data.average_rating} />
                         </div>
                         <p className='font-semibold text-gray-600 dark:text-white'>
                             {props.data.amount_rating} đánh giá
@@ -152,14 +216,24 @@ function Product(props) {
                 </div>
                 <div className='my-1 h-px bg-gray-300 dark:bg-gray-600'>
                 </div>
-                <div className='product-detail-price'>
-                    <p className='text-5xl font-bold text-red-600 dark:text-white'>
-                        {props.data.sale.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
-                    </p>
-                    <p className='text-3xl p-3 line-through font-bold text-gray-600 dark:text-white'>
-                        {props.data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
-                    </p>
-                </div>
+                {
+                    props.data.sale ? (
+                        <div className='product-detail-price'>
+                            <p className='text-5xl font-bold text-red-600 dark:text-white'>
+                                {props.data.sale.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
+                            </p>
+                            <p className='text-3xl p-3 line-through font-bold text-gray-600 dark:text-white'>
+                                {props.data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
+                            </p>
+                        </div>
+                    ) : (
+                        <div className='product-detail-price'>
+                            <p className='text-3xl p-3 font-bold text-gray-600 dark:text-white'>
+                                {props.data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
+                            </p>
+                        </div>
+                    )
+                }
                 <div className='my-1 h-px bg-gray-300 dark:bg-gray-600'>
                 </div>
                 <div className='product-detail-form'>
@@ -347,7 +421,7 @@ function ReviewDetail(props) {
                     Trần Tấn Trung
                 </h4>
                 <div className='product-detail-star'>
-                    <StartRating />
+                    <StartRating rating={2} />
                 </div>
                 <h5 className='text-sm font-bold text-gray-600 dark:text-white'>
                     2020-09-08 22:30
