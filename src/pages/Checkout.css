@@ -190,3 +190,21 @@ i {
 @keyframes spin{
     100%{-webkit-transform: rotate(360deg);}
 }
+
+.loading{
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    background-color: gray;
+    opacity: 0.4;
+    z-index: 100;
+}
+
+.loading div{
+    margin: auto;
+    margin-top: 300px;
+}
+
+.hide{
+    display: none;
+}
