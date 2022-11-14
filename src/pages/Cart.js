@@ -6,8 +6,9 @@ import StartRating from '../components/StartRating';
 import { StoreContext } from '../store/store';
 import { useEffect, useState, useContext, useRef } from 'react';
 import { Avatar } from 'flowbite-react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
+import { data } from 'autoprefixer';
 
 export default function Cart(props) {
     const { cart } = useContext(StoreContext)
@@ -101,6 +102,7 @@ export default function Cart(props) {
 function CartByStore(props) {
     const [total, setTotal] = useState(0)
     const data = props.data
+    const history = useHistory()
     useEffect(() => {
         let sum = 0
         data.cart_detail.map((product) => {
@@ -129,6 +131,30 @@ function CartByStore(props) {
         }
         return <div></div>
     }
+
+    const handleOrder = async() => {
+        var config = {
+            method: 'get',
+            url: 'http://127.0.0.1:8000/cart/' + data.id,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+
+        await axios(config)
+            .then(function (response) {
+                const dataOrder = {
+                    "total" : total,
+                    "product": response.data.cart_detail
+                }
+                localStorage.setItem("order", JSON.stringify(dataOrder));
+                history.push("order")
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    }
     return (
         <div className='cart-by-store'>
             <p className='p-5 text-xl font-bold text-gray-600 dark:text-white hover:text-blue-600'>
@@ -146,9 +172,9 @@ function CartByStore(props) {
                         {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
                     </h4>
                 </div>
-                <Link to="1" type='button' className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                <button onClick={handleOrder} type='button' className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                     Đặt hàng
-                </Link>
+                </button>
             </div>
         </div>
     )

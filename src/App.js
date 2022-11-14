@@ -165,7 +165,7 @@ function Customer() {
       <Route exact path={path}>
         Customer Page
       </Route>
-      <Route path={`${path}/cart/:id`} component={CheckoutRoute}>
+      <Route path={`${path}/cart/order`} component={Checkout}>
       </Route>
       <Route path={`${path}/cart/`} component={Cart}>
       </Route>
@@ -177,12 +177,6 @@ function Customer() {
       </Route>
     </Switch>
   )
-  function CheckoutRoute() {
-    let { id } = useParams();
-    return (
-      <Checkout />
-    )
-  }
 }
 
 function Admin() {

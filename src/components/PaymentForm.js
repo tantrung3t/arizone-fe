@@ -37,39 +37,39 @@ export default function PaymentForm(props) {
             card: elements.getElement(CardElement)
         })
         console.log(paymentMethod)
-        if (!error) {
-            try {
-                const { id } = paymentMethod
-                const response = await axios.post("http://localhost:8000/intents/", {
-                    amount: 1000,
-                    id
-                })
-                console.log(response.data.client_secret)
-                if (response.data.success) {
-                    console.log("Successful payment")
-                    // setSuccess(true)
+        // if (!error) {
+        //     try {
+        //         const { id } = paymentMethod
+        //         const response = await axios.post("http://localhost:8000/intents/", {
+        //             amount: 1000,
+        //             id
+        //         })
+        //         console.log(response.data.client_secret)
+        //         if (response.data.success) {
+        //             console.log("Successful payment")
+        //             // setSuccess(true)
 
-                    const confirmPayment = await stripe
-                        .confirmCardPayment(
-                            response.data.client_secret, {
-                            payment_method: {
-                                card: elements.getElement(CardElement)
-                            }
-                        }
-                        )
-                        .then(function (result) {
-                            // Handle result.error or result.paymentIntent
-                        });
+        //             const confirmPayment = await stripe
+        //                 .confirmCardPayment(
+        //                     response.data.client_secret, {
+        //                     payment_method: {
+        //                         card: elements.getElement(CardElement)
+        //                     }
+        //                 }
+        //                 )
+        //                 .then(function (result) {
+        //                     // Handle result.error or result.paymentIntent
+        //                 });
 
-                    console.log(confirmPayment)
-                }
+        //             console.log(confirmPayment)
+        //         }
 
-            } catch (error) {
-                console.log("Error", error)
-            }
-        } else {
-            console.log(error.message)
-        }
+        //     } catch (error) {
+        //         console.log("Error", error)
+        //     }
+        // } else {
+        //     console.log(error.message)
+        // }
     }
 
     return (

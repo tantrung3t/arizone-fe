@@ -14,10 +14,6 @@ const HOST = process.env.REACT_APP_HOST
 
 export default function ProductDetail(props) {
 
-    useEffect(() => {
-        window.scrollTo(0, 0)
-    }, [])
-
     const [data, setData] = useState(
         {
             "name": "",
@@ -58,7 +54,6 @@ export default function ProductDetail(props) {
                 setData(response.data)
             })
             .catch(function (error) {
-
             });
     }
 
@@ -74,6 +69,8 @@ export default function ProductDetail(props) {
             </header>
             <main>
                 <div className='body-container'>
+                    {/* <div className='loading-container'>
+                    </div> */}
                     {
                         data.name ? (
                             <>
@@ -85,9 +82,9 @@ export default function ProductDetail(props) {
                             </>
                         ) : (
                             <>
-                            <div>
-                                404 not found
-                            </div>
+                                <div>
+                                    404 not found
+                                </div>
                             </>
                         )
                     }
@@ -131,12 +128,24 @@ function Product(props) {
     }
 
     const handleBuyProduct = () => {
-        console.log(value)
+        if (localStorage.getItem('accessToken') && localStorage.getItem('refreshToken') && localStorage.getItem('role') === "ctm") {
+            console.log(value)
+        }
+        else {
+            toastFailed()
+        }
+
     }
 
     const handleAddToCart = () => {
-        setCart(cart + value)
-        addCartAPI()
+        if (localStorage.getItem('accessToken') && localStorage.getItem('refreshToken') && localStorage.getItem('role') === "ctm") {
+            setCart(cart + value)
+            addCartAPI()
+        }
+        else {
+            toastFailed()
+        }
+
     }
 
     const addCartAPI = () => {
@@ -160,13 +169,22 @@ function Product(props) {
                 })
             })
             .catch(function (error) {
-                console.log(error);
             });
     }
 
     const toastSuccess = () => toast.success('Đã thêm sản phẩm vào giỏ!', {
         position: "top-center",
-        autoClose: 3000,
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+    });
+    const toastFailed = () => toast.warn('Bạn cần đăng nhập!', {
+        position: "top-center",
+        autoClose: 2000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
