@@ -7,6 +7,9 @@ import { StoreContext } from '../store/store';
 import { useEffect, useState, useContext, useRef } from 'react';
 import { Avatar } from 'flowbite-react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+
+const HOST = process.env.REACT_APP_HOST
 
 export default function HistoryOrder() {
     const [all, setAll] = useState("order-tab-underline")
@@ -14,6 +17,50 @@ export default function HistoryOrder() {
     const [shipping, setShipping] = useState("order-tab-underline-hide")
     const [success, setSuccess] = useState("order-tab-underline-hide")
     const [cancel, setCancel] = useState("order-tab-underline-hide")
+
+    const [data, setData] = useState([])
+
+    const loadData = async () => {
+        var config = {
+            method: 'get',
+            url: HOST + '/order/list/?ordering=-id',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            }
+        };
+
+        await axios(config)
+            .then(function (response) {
+                setData(response.data)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    useEffect(() => {
+        loadData()
+    }, [])
+
+    const listHistoryOrder = () => {
+        if (data) {
+            let element = data.map((item, index) => {
+                return <HistoryOrderDetail
+                    key={index}
+                    full_name={item.full_name}
+                    phone={item.phone}
+                    address={item.address}
+                    total={item.total}
+                    status={item.status}
+                    store={item.store.user.full_name}
+                    product_detail={item.product_detail}
+                    paymentMethod={item.payment} />
+            })
+            return element;
+        }
+        return <div></div>
+    }
+
     const handleTabALL = () => {
         setAll("order-tab-underline")
         setProcessing("order-tab-underline-hide")
@@ -119,18 +166,7 @@ export default function HistoryOrder() {
                             </div>
                         </div>
                         <div>
-                            <HistoryOrderDetail
-                                status="processing"
-                                paymentMethod="card" />
-                            <HistoryOrderDetail
-                                status="shipping"
-                                paymentMethod="cash" />
-                            <HistoryOrderDetail
-                                status="success"
-                                paymentMethod="card" />
-                            <HistoryOrderDetail
-                                status="cancel"
-                                paymentMethod="cash" />
+                            {listHistoryOrder()}
                         </div>
                     </div>
                 </div>
@@ -144,7 +180,7 @@ export default function HistoryOrder() {
 
 function HistoryOrderDetail(props) {
     const showStatus = () => {
-        if (props.status === "processing") {
+        if (props.status === "pending") {
             return (
                 <Processing />
             )
@@ -180,19 +216,33 @@ function HistoryOrderDetail(props) {
             <CashPayment />
         )
     }
+
+    const listProduct = () => {
+        let element = props.product_detail.map((item, index) => {
+            return <Product
+                key={index}
+                name={item.product.name}
+                image={item.product.image}
+                price={item.price}
+                sale={item.sale}
+                quantity={item.quantity}
+            />
+        })
+        return element;
+    }
     return (
         <div className='history-order-detail'>
             <div className='order-display-flex history-order-detail-status'>
-                <p className='text-xl font-bold text-gray-800 dark:text-white'>
-                    Cua hang a
+                <p className='mt-2 text-xl font-bold text-gray-800 dark:text-white'>
+                    {props.store}
                 </p>
                 {showStatus()}
             </div>
-            <Product />
-            <Product />
+            {listProduct()}
+
             <div className='history-order-detail-total'>
                 <p className='text-xl font-bold text-gray-800 dark:text-white'>
-                    Tổng: 1.000.000đ
+                    Tổng: {props.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
                 </p>
             </div>
             <div className='order-history-line'>
@@ -203,13 +253,13 @@ function HistoryOrderDetail(props) {
                         Thông tin người nhận:
                     </p>
                     <p className='text-sm font-bold text-gray-600 dark:text-white'>
-                        Trần Tấn Trung
+                        {props.full_name}
                     </p>
                     <p className='text-sm font-bold text-gray-600 dark:text-white'>
-                        0327171194
+                        {props.phone}
                     </p>
                     <p className='text-sm font-bold text-gray-600 dark:text-white'>
-                        Hưng Lợi, Ninh Kiều, Cần Thơ
+                        {props.address}
                     </p>
                 </div>
                 <div>
@@ -293,22 +343,31 @@ function Product(props) {
         <div className='order-display-flex history-order-detail-product'>
             <div className='order-display-flex'>
                 <img
-                    src="https://www.w3schools.com/w3css/img_lights.jpg"
+                    src={props.image}
                     alt="store"
                 />
                 <div className='history-order-detail-product-info'>
                     <p className='text-lg font-bold text-gray-600 dark:text-white'>
-                        Thuốc trừ sâu hiệu con Nai
+                        {props.name}
                     </p>
                     <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                        x1
+                        x{props.quantity}
                     </p>
                 </div>
             </div>
             <div className='history-order-detail-product-info-price'>
-                <p className='text-lg font-bold text-gray-800 dark:text-white'>
-                    200.000đ
-                </p>
+                {
+                    props.sale ? (
+                        <p className='text-lg font-bold text-gray-800 dark:text-white'>
+                            {props.sale.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
+                        </p>
+                    ) : (
+                        <p className='text-lg font-bold text-gray-800 dark:text-white'>
+                            {props.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
+                        </p>
+                    )
+
+                }
             </div>
         </div>
     )

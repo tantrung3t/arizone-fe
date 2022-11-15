@@ -48,7 +48,7 @@
 .product-image {
     width: 280px;
     height: 320px;
-    object-fit: cover;
+    object-fit: scale-down;
     margin: auto;
     margin-bottom: 20px;
     border-radius: 7px;

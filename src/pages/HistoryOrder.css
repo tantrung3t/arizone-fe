@@ -116,6 +116,10 @@
     width: 500px;
 }
 
+.history-order-detail-product-info p{
+    width: 80%;
+}
+
 .history-order-detail-product-info-price {
     margin: auto;
 }

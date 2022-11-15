@@ -26,6 +26,7 @@ export default function Checkout(props) {
     )
     const [product, setProduct] = useState(
         {
+            "business": "",
             "total": 0,
             "product": []
         }
@@ -46,7 +47,9 @@ export default function Checkout(props) {
         let productOrder = []
         product.product.map((item, index) => {
             let data = {
-                "id": item.product.id,
+                "product": item.product.id,
+                "price": item.product.price,
+                "sale": item.product.sale,
                 "quantity": item.quantity
             }
             return productOrder.push(data)
@@ -55,19 +58,38 @@ export default function Checkout(props) {
             "full_name": name,
             "phone": phone,
             "address": address,
+            "business": product.business,
             "order": productOrder
         }
         setDataOrder(data)
         return data
     }
-    const cashPayment = () => {
+    const cashPayment = async () => {
+
         setLoadingScreen("loading")
         let order = getDataOrder()
-        console.log(JSON.stringify(order))
-        setTimeout(() =>{
-            setLoadingScreen("hide")
-            history.push("/customer/order")
-        }, 500)
+
+        var config = {
+            method: 'post',
+            url: 'http://127.0.0.1:8000/order/create/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                'Content-Type': 'application/json'
+            },
+            data: order
+        };
+
+        await axios(config)
+            .then(function (response) {
+                setTimeout(() => {
+                    setLoadingScreen("hide")
+                    history.push("/customer/order")
+                }, 500)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
 
     }
     const closeModal = () => {

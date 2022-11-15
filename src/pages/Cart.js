@@ -144,6 +144,7 @@ function CartByStore(props) {
         await axios(config)
             .then(function (response) {
                 const dataOrder = {
+                    "business": response.data.business.id,
                     "total" : total,
                     "product": response.data.cart_detail
                 }
