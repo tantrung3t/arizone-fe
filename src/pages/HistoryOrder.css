@@ -6,6 +6,7 @@
     width: 80%;
     margin: auto;
     animation: order-container-appear 0.75s;
+    min-height: 570px;
 }
 @keyframes order-container-appear{
     from{

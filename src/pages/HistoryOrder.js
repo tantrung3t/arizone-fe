@@ -61,12 +61,31 @@ export default function HistoryOrder() {
         return <div></div>
     }
 
+    const loadOrderFilter = async(status) =>{
+        var config = {
+            method: 'get',
+            url: HOST + '/order/list/?ordering=-id&status=' + status,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            }
+        };
+
+        await axios(config)
+            .then(function (response) {
+                setData(response.data)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     const handleTabALL = () => {
         setAll("order-tab-underline")
         setProcessing("order-tab-underline-hide")
         setShipping("order-tab-underline-hide")
         setSuccess("order-tab-underline-hide")
         setCancel("order-tab-underline-hide")
+        loadData()
     }
     const handleTabProcessing = () => {
         setAll("order-tab-underline-hide")
@@ -74,6 +93,7 @@ export default function HistoryOrder() {
         setShipping("order-tab-underline-hide")
         setSuccess("order-tab-underline-hide")
         setCancel("order-tab-underline-hide")
+        loadOrderFilter("pending")
     }
     const handleTabShipping = () => {
         setAll("order-tab-underline-hide")
@@ -81,6 +101,7 @@ export default function HistoryOrder() {
         setShipping("order-tab-underline")
         setSuccess("order-tab-underline-hide")
         setCancel("order-tab-underline-hide")
+        loadOrderFilter("shipping")
     }
     const handleTabSuccess = () => {
         setAll("order-tab-underline-hide")
@@ -88,6 +109,7 @@ export default function HistoryOrder() {
         setShipping("order-tab-underline-hide")
         setSuccess("order-tab-underline")
         setCancel("order-tab-underline-hide")
+        loadOrderFilter("success")
     }
     const handleTabCancel = () => {
         setAll("order-tab-underline-hide")
@@ -95,6 +117,7 @@ export default function HistoryOrder() {
         setShipping("order-tab-underline-hide")
         setSuccess("order-tab-underline-hide")
         setCancel("order-tab-underline")
+        loadOrderFilter("cancel")
     }
     return (
         <div>
@@ -132,7 +155,7 @@ export default function HistoryOrder() {
                             <div className='order-tab-title'>
                                 <button onClick={handleTabShipping}>
                                     <p className='text-xl font-bold text-gray-800 dark:text-white'>
-                                        Đang giao
+                                        Đã chấp nhận
                                     </p>
                                 </button>
                                 <h1 className={shipping}>
@@ -331,7 +354,7 @@ function Shipping() {
     return (
         <div className='history-order-detail-shipping'>
             <p className='text-xm font-bold text-yellow-50 dark:text-white'>
-                Đang giao
+                Đã chấp nhận
             </p>
         </div>
     )

@@ -10,22 +10,29 @@ import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { data } from 'autoprefixer';
 
+const HOST = process.env.REACT_APP_HOST
+
 export default function Cart(props) {
     const { cart } = useContext(StoreContext)
     const [data, setData] = useState([])
+    const [loadingScreen, setLoadingScreen] = useState("cart-loading")
     useEffect(() => {
         window.scrollTo(0, 0)
         loadCart()
     }, [])
     const listCart = () => {
         let element = data.map((data, index) => {
-            return <CartByStore key={index}
-                data={data}
-            />
+            if (data.cart_detail.length !== 0) {
+                return <CartByStore key={index}
+                    data={data}
+                    loadCart={() => { loadCart() }}
+                />
+            }
         })
         return element;
     }
     const loadCart = async () => {
+        setLoadingScreen("cart-loading")
         var config = {
             method: 'get',
             url: process.env.REACT_APP_HOST + '/cart/',
@@ -36,7 +43,11 @@ export default function Cart(props) {
 
         await axios(config)
             .then(function (response) {
-                setData(response.data)
+                setTimeout(() => {
+                    window.scrollTo(0, 0)
+                    setData(response.data)
+                    setLoadingScreen("hide")
+                }, 300)
             })
             .catch(function (error) {
                 console.log(error);
@@ -48,8 +59,15 @@ export default function Cart(props) {
                 <Header></Header>
             </header>
             <main>
+                <div className={loadingScreen}>
+                    <div role="status" className='w-20 h-20'>
+                        <svg aria-hidden="true" className="mr-2 w-20 h-20 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+                        </svg>
+                    </div>
+                </div>
                 <div className='body-container'>
-
                     {cart ? (<div className='cart-container'>
                         <p className='p-5 text-3xl font-bold text-gray-600 dark:text-white'>
                             Giỏ hàng
@@ -86,7 +104,7 @@ export default function Cart(props) {
                         </div>
                     </div>
                     ) : (
-                        <div>Khong co</div>
+                        <div className='cart-404-container'>Khong co</div>
                     )
                     }
 
@@ -119,12 +137,66 @@ function CartByStore(props) {
     const sumCartTotal = (before_total, after_total) => {
         setTotal(total - before_total + after_total)
     }
+
+    const updateOrder = async (id, data) => {
+        var config = {
+            method: 'put',
+            url: HOST + '/cart/update/' + id + '/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+        await axios(config)
+            .then(function (response) {
+
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    const deleteCart = async (id) => {
+        var config = {
+            method: 'delete',
+            url: HOST + '/cart/delete/' + id + '/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                props.loadCart()
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    const increase = (id) => {
+        const data = {
+            "quantity": 1
+        }
+        updateOrder(id, data)
+    }
+    const decrease = (id) => {
+        const data = {
+            "quantity": -1
+        }
+        updateOrder(id, data)
+    }
+
     const listProduct = () => {
         if (data) {
             let element = data.cart_detail.map((product, index) => {
                 return <Product key={index}
                     product={product}
+                    increase={(cart_id) => { increase(cart_id) }}
+                    decrease={(cart_id) => { decrease(cart_id) }}
+                    deleteCart={(cart_id) => { deleteCart(cart_id) }}
                     sumCartTotal={(before_total, after_total) => { sumCartTotal(before_total, after_total) }}
+
                 />
             })
             return element;
@@ -132,7 +204,7 @@ function CartByStore(props) {
         return <div></div>
     }
 
-    const handleOrder = async() => {
+    const handleOrder = async () => {
         var config = {
             method: 'get',
             url: 'http://127.0.0.1:8000/cart/' + data.id,
@@ -145,7 +217,7 @@ function CartByStore(props) {
             .then(function (response) {
                 const dataOrder = {
                     "business": response.data.business.id,
-                    "total" : total,
+                    "total": total,
                     "product": response.data.cart_detail
                 }
                 localStorage.setItem("order", JSON.stringify(dataOrder));
@@ -182,8 +254,7 @@ function CartByStore(props) {
 }
 
 function Product(props) {
-    const product = props.product
-
+    let product = props.product
     const [value, setValue] = useState(product.quantity)
     const [price, setPrice] = useState(0)
 
@@ -203,8 +274,10 @@ function Product(props) {
         setValue(event.target.value - 1 + 1)
     }
     const increase = (e) => {
+
         if (value < 20) {
             setValue(value - 0 + 1)
+            props.increase(product.id)
             props.sumCartTotal(price * (value), price * (value + 1));
         }
         else setValue(20)
@@ -215,7 +288,9 @@ function Product(props) {
 
     }
     const decrease = (e) => {
+
         if (value > 1) {
+            props.decrease(product.id)
             setValue(value - 1)
             props.sumCartTotal(price * (value), price * (value - 1));
         }
@@ -224,7 +299,10 @@ function Product(props) {
             setValue(20)
             props.sumCartTotal(price * (value), price * (value - 1));
         }
+    }
 
+    const deleteCart = () => {
+        props.deleteCart(product.id)
     }
     const showPrice = () => {
         if (product.product.sale) {
@@ -275,7 +353,7 @@ function Product(props) {
                 </p>
             </div>
             <div className='cart-title-action'>
-                <button className='text-lg font-semibold text-red-900 underline dark:text-white'>
+                <button onClick={deleteCart} className='text-lg font-semibold text-red-900 underline dark:text-white'>
                     Xoá
                 </button>
             </div>

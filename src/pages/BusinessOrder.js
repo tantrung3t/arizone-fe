@@ -2,44 +2,10 @@ import { useState, useEffect } from 'react';
 import './Business.css'
 import { Dropdown } from 'flowbite-react';
 import SideBarBusiness from '../components/SideBarBusiness';
+import axios from 'axios';
 
-const store = [
-    {
-        store_name: "hình",
-        email: "Sản phẩm 1",
-        phone: "",
-        status: "Active",
-        address: "Cửa hàng A"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 2",
-        phone: "",
-        status: "Pending",
-        address: "Cửa hàng A"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 3",
-        phone: "",
-        status: "Active",
-        address: "Cửa hàng B"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 4",
-        phone: "",
-        status: "Block",
-        address: "Cửa hàng A"
-    },
-    {
-        store_name: "",
-        email: "Sản phẩm 5",
-        phone: "",
-        status: "Active",
-        address: "Cửa hàng B"
-    }
-]
+
+const HOST = process.env.REACT_APP_HOST
 
 export default function BusinessOrder() {
     const [statusFilter, setStatusFilter] = useState("Tất cả")
@@ -63,18 +29,39 @@ export default function BusinessOrder() {
         const dataSubmit = new FormData(e.currentTarget);
         console.log(dataSubmit.get('search-product'))
     }
+
+    const [order, setOrder] = useState([])
+
+    const loadOrder = async () => {
+        var config = {
+            method: 'get',
+            url: HOST + '/business/order/list/?ordering=-id',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            }
+        };
+
+        await axios(config)
+            .then(function (response) {
+                setOrder(response.data.results)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    }
+
     useEffect(() => {
-        setProduct(store)
+        loadOrder()
     }, [])
     const listProduct = () => {
-        let element = product.map((user, index) => {
+        let element = order.map((item, index) => {
             return <StoreUser key={index}
-                id={index}
-                store_name={user.store_name}
-                email={user.email}
-                phone={user.phone}
-                status={user.status}
-                address={user.address}
+                id={item.id}
+                full_name={item.full_name}
+                payment={item.payment}
+                status={item.status}
+                total={item.total}  
             />
         })
         return element;
@@ -131,7 +118,7 @@ export default function BusinessOrder() {
                                 </h1>
                             </Dropdown>
                         </div>
-                        
+
                     </div>
                     <div className='business-product-title bg-gray-200'>
                         <p className='text-base font-medium text-gray-600 dark:text-gray-300'>
@@ -172,17 +159,23 @@ export default function BusinessOrder() {
 function StoreUser(props) {
     const [action, setAction] = useState("business-action-hide")
     const showStatus = () => {
-        if (props.status === "Active") {
+        if (props.status === "success") {
             return (
                 <p className='text-base font-semibold text-green-500 dark:text-gray-300'>
                     Thành công
                 </p>
             )
         }
-        else if (props.status === "Block") {
+        else if (props.status === "cancel") {
             return (
                 <p className='text-base font-semibold text-red-500 dark:text-gray-300'>
                     Đã huỷ
+                </p>
+            )
+        } else if (props.status === "shipping") {
+            return (
+                <p className='text-base font-semibold text-yellow-500 dark:text-gray-300'>
+                    Chấp nhận
                 </p>
             )
         } else {
@@ -206,18 +199,26 @@ function StoreUser(props) {
     return (
         <div onClick={showDetail} className='business-product-store'>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
-                DH-0001
+                {props.id}
             </p>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
-                Trần Tấn Trung
+                {props.full_name}
             </p>
             {showStatus()}
             <p className='text-sm font-semibold text-gray-600 dark:text-gray-300'>
-                560.000đ
+                {props.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
             </p>
-            <p className='text-sm font-semibold text-gray-600 dark:text-gray-300'>
-                Online
-            </p>
+            {
+                props.payment === "cash" ? (
+                    <p className='text-sm font-semibold text-gray-600 dark:text-gray-300'>
+                        COD
+                    </p>
+                ) : (
+                    <p className='text-sm font-semibold text-gray-600 dark:text-gray-300'>
+                        Online
+                    </p>
+                )
+            }
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
                 <button onClick={showAction}>
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg>

@@ -9,6 +9,7 @@ import { Avatar } from 'flowbite-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
+import StarsRating from 'stars-rating'
 
 const HOST = process.env.REACT_APP_HOST
 
@@ -78,7 +79,7 @@ export default function ProductDetail(props) {
                                 <Business data={data.business} />
                                 <ProductInformation data={data} />
                                 {/* <ProductRecommend /> */}
-                                <Review />
+                                <Review id={props.id} />
                             </>
                         ) : (
                             <>
@@ -350,37 +351,9 @@ function Business(props) {
                     </Link>
                 </div>
             </div>
-            <div className='business-info-tab-2'>
-            </div>
+
             <div className='business-info-tab-3'>
-                <div className='business-info-tab-3-left'>
-                    <div className='display-flex'>
-                        <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
-                        <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                            Đánh giá: {props.data.rating}
-                        </p>
-                    </div>
-                    <div className='display-flex'>
-                        <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
-                        <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                            Sản phẩm: {props.data.amount_product}
-                        </p>
-                    </div>
-                </div>
-                <div className='business-info-tab-3-right'>
-                    <div className='display-flex'>
-                        <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                        <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                            Đã bán: {props.data.sold}
-                        </p>
-                    </div>
-                    <div className='display-flex'>
-                        <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                            Tham gia: {props.data.user.created.slice(0, 10)}
-                        </p>
-                    </div>
-                </div>
+
 
             </div>
         </div>
@@ -397,9 +370,75 @@ function ProductRecommend(props) {
 
 function Review(props) {
     const titleRef = useRef()
+    const [review, setReview] = useState([])
+    const [star, setStar] = useState(0)
+    const [content, setContent] = useState("")
     const handleScrollClick = () => {
         titleRef.current.scrollIntoView({ behavior: 'smooth' })
     }
+    const ratingChanged = (newRating) => {
+        setStar(newRating)
+    }
+    const sendRating = async (e) => {
+        e.preventDefault()
+        const dataSubmit = new FormData(e.currentTarget);
+        const data = {
+            "product": props.id,
+            "star": star,
+            "content": dataSubmit.get('content')
+        }
+        var config = {
+            method: 'post',
+            url: HOST + '/review/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+        await axios(config)
+            .then(function (response) {
+                loadReview()
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    useEffect(() => {
+        loadReview()
+    }, [])
+
+    const loadReview = () => {
+        var config = {
+            method: 'get',
+            url: HOST + '/review/' + props.id + '/?ordering=-id',
+            headers: {}
+        };
+
+        axios(config)
+            .then(function (response) {
+                setReview(response.data.results)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    }
+
+    const listReview = () => {
+        let element = review.map((item, index) => {
+            return <ReviewDetail
+                key={index}
+                full_name={item.user.full_name}
+                image={item.user.image}
+                star={item.star}
+                content={item.content}
+            />
+        })
+        return element;
+    }
+
     return (
         <div id='review-product' className='review-product'>
             <div ref={titleRef} className="review-to-scroll"></div>
@@ -408,14 +447,26 @@ function Review(props) {
                     Đánh giá - Nhận xét từ khách hàng
                 </p>
             </div>
-            <ReviewDetail />
-            <ReviewDetail />
-            <ReviewDetail />
-            <ReviewDetail />
-            <ReviewDetail />
-            <ReviewDetail />
-            <ReviewDetail />
-            <ReviewDetail />
+            <div>
+                <StarsRating
+                    count={5}
+                    onChange={ratingChanged}
+                    size={30}
+                    color2={'#ffd700'} />
+                <form onSubmit={sendRating}>
+                    <textarea
+                        id="content"
+                        rows="4"
+                        name="content"
+                        className="block p-2.5 w-full text-base text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Nhận xét và đánh giá của bạn...">
+                    </textarea>
+                    <button type="submit" className="mt-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        Gửi đánh giá
+                    </button>
+                </form>
+            </div>
+            {listReview()}
             <div className='more-review'>
                 <button onClick={handleScrollClick} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                     Xem thêm đánh giá
@@ -430,27 +481,22 @@ function ReviewDetail(props) {
         <div className='review-detail'>
             <div>
                 <Avatar
-                    img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                    img={props.image}
                     rounded={true}
                 />
             </div>
             <div className='review-detail-description'>
                 <h4 className='text-xl font-bold text-gray-900 dark:text-white'>
-                    Trần Tấn Trung
+                    {props.full_name}
                 </h4>
                 <div className='product-detail-star'>
-                    <StartRating rating={2} />
+                    <StartRating rating={props.star} />
                 </div>
-                <h5 className='text-sm font-bold text-gray-600 dark:text-white'>
+                {/* <h5 className='text-sm font-bold text-gray-600 dark:text-white'>
                     2020-09-08 22:30
-                </h5>
-                <p className='text-lg font-semibold text-gray-700 dark:text-white'>
-                    Sản phẩm dùng cũng được nhưng có nhiều vấn đề bên khâu vận chuyển
-                    shipper giao chậm giao
-                    ản phẩm dùng cũng được nhưng có nhiều vấn đề bên khâu vận chuyển
-                    shipper giao chậm giao
-                    ản phẩm dùng cũng được nhưng có nhiều vấn đề bên khâu vận chuyển
-                    shipper giao chậm giao
+                </h5> */}
+                <p className='mt-3 text-lg font-semibold text-gray-700 dark:text-white'>
+                    {props.content}
                 </p>
             </div>
         </div>
