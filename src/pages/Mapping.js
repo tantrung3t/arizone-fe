@@ -6,9 +6,69 @@ import { createControlComponent } from "@react-leaflet/core";
 import "leaflet-routing-machine";
 import Header from "../components/Header";
 import './Mapping.css'
+import axios from "axios";
 
+const HOST = process.env.REACT_APP_HOST
 
 function Mapping() {
+
+  const [position, setPosition] = useState([])
+  const [latitude, setLatitude] = useState(0)
+  const [longitude, setLongitude] = useState(0)
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+      console.log("NOT")
+    }
+    function showPosition(position) {
+      console.log("Latitude: " + position.coords.latitude + " Longitude: " + position.coords.longitude)
+      setLatitude(position.coords.latitude)
+      setLongitude(position.coords.longitude)
+      loadMap(position.coords.latitude, position.coords.longitude)
+    }
+  }, [])
+
+  const loadMap = async (latitude, longitude) => {
+    var data = {
+      "latitude": latitude,
+      "longitude": longitude
+    };
+
+    var config = {
+      method: 'post',
+      url: HOST + '/map/',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: data
+    };
+
+    await axios(config)
+      .then(function (response) {
+        setPosition(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  const listMarker = () => {
+    let element = position.map((item, index) => {
+      console.log(item.latitude)
+      return <Marker position={[item.latitude, item.longitude]} key={index}>
+        <Popup>
+          <Store
+            id={item.id}
+            business_name={item.user.full_name}
+            image={HOST + item.user.image} />
+        </Popup>
+      </Marker>
+    })
+    return element;
+  }
+
   return (
     <div>
       <header>
@@ -16,25 +76,21 @@ function Mapping() {
       </header>
       <main>
         <div className="body-container">
-          <MapContainer center={[10.0362005, 105.788033]} zoom={16} scrollWheelZoom={true}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={[10.036100, 105.788033]}>
-              <Popup>
-                <Store business_name="Cửa hàng sản phẩm ADC"
-                  image="https://static.vecteezy.com/system/resources/thumbnails/004/702/341/small/hb-hexagon-letter-logo-isolated-on-white-background-vector.jpg" />
-              </Popup>
-            </Marker>
-            <Marker position={[10.038000, 105.788033]}>
-              <Popup>
-                <Store business_name="Cửa hàng vật tư nông nghiệp Hoà Bình"
-                  image="https://printgo.vn/uploads/file-logo/1/512x512.56d2835d0e091042311f8688d1ab3ce8.ai.1.png" />
-              </Popup>
-            </Marker>
-            {/* <RoutingMachine /> */}
-          </MapContainer>
+          {
+            longitude ? (
+              <MapContainer center={[latitude, longitude]} zoom={14} scrollWheelZoom={true}>
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+
+                {listMarker()}
+                {/* <RoutingMachine /> */}
+              </MapContainer>
+            ) : (
+              <></>
+            )
+          }
         </div>
       </main>
     </div>
@@ -65,7 +121,7 @@ const RoutingMachine = createControlComponent(createRoutineMachineLayer);
 
 function Store(props) {
   return (
-    <Link to="/store/1" className="map-store-container">
+    <Link to={"/store/" + props.id} className="map-store-container">
       <img className=''
         src={props.image}
         alt="product 1"
