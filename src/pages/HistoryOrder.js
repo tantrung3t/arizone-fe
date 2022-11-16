@@ -61,7 +61,7 @@ export default function HistoryOrder() {
         return <div></div>
     }
 
-    const loadOrderFilter = async(status) =>{
+    const loadOrderFilter = async (status) => {
         var config = {
             method: 'get',
             url: HOST + '/order/list/?ordering=-id&status=' + status,
@@ -230,14 +230,16 @@ function HistoryOrderDetail(props) {
 
     }
     const showPaymentMethod = () => {
-        if (props.paymentMethod === "card") {
+        if (props.paymentMethod === "online") {
             return (
                 <CardPayment />
             )
+        } else {
+            return (
+                <CashPayment />
+            )
         }
-        return (
-            <CashPayment />
-        )
+
     }
 
     const listProduct = () => {

@@ -140,7 +140,7 @@ function Product(props) {
 
     const handleAddToCart = () => {
         if (localStorage.getItem('accessToken') && localStorage.getItem('refreshToken') && localStorage.getItem('role') === "ctm") {
-            setCart(cart + value)
+            // setCart(cart + value)
             addCartAPI()
         }
         else {

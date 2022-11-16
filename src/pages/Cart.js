@@ -68,7 +68,7 @@ export default function Cart(props) {
                     </div>
                 </div>
                 <div className='body-container'>
-                    {cart ? (<div className='cart-container'>
+                    {data.length ? (<div className='cart-container'>
                         <p className='p-5 text-3xl font-bold text-gray-600 dark:text-white'>
                             Giỏ hàng
                         </p>
@@ -216,6 +216,7 @@ function CartByStore(props) {
         await axios(config)
             .then(function (response) {
                 const dataOrder = {
+                    "cart_id": data.id,
                     "business": response.data.business.id,
                     "total": total,
                     "product": response.data.cart_detail

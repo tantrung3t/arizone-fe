@@ -26,6 +26,7 @@ export default function Checkout(props) {
     )
     const [product, setProduct] = useState(
         {
+            "cart_id": "",
             "business": "",
             "total": 0,
             "product": []
@@ -39,9 +40,10 @@ export default function Checkout(props) {
     const [loadingScreen, setLoadingScreen] = useState("hide")
 
     const [dataOrder, setDataOrder] = useState()
+
     const onlinePayment = () => {
+        let order = getDataOrder()
         setModalHide("modal")
-        console.log(dataOrder)
     }
     const getDataOrder = () => {
         let productOrder = []
@@ -55,6 +57,7 @@ export default function Checkout(props) {
             return productOrder.push(data)
         })
         let data = {
+            "cart_id": product.cart_id,
             "full_name": name,
             "phone": phone,
             "address": address,
@@ -64,14 +67,23 @@ export default function Checkout(props) {
         setDataOrder(data)
         return data
     }
+
+    const loading = () => {
+        setLoadingScreen("loading")
+    }
+
+    const closeLoading = () => {
+        setLoadingScreen("hide")
+    }
+
     const cashPayment = async () => {
 
-        setLoadingScreen("loading")
+        loading()
         let order = getDataOrder()
 
         var config = {
             method: 'post',
-            url: 'http://127.0.0.1:8000/order/create/',
+            url: HOST + '/order/create/cash/',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
                 'Content-Type': 'application/json'
@@ -82,7 +94,7 @@ export default function Checkout(props) {
         await axios(config)
             .then(function (response) {
                 setTimeout(() => {
-                    setLoadingScreen("hide")
+                    closeLoading()
                     history.push("/customer/order")
                 }, 500)
             })
@@ -174,7 +186,11 @@ export default function Checkout(props) {
 
                             </div>
                             <div className="modal__body">
-                                <StripePaymentModal data={dataOrder} />
+                                <StripePaymentModal
+                                    data={dataOrder}
+                                    loading={() => loading()}
+                                    closeLoading={() => closeLoading()}
+                                />
                             </div>
                         </div>
                     </div>
@@ -358,7 +374,11 @@ function Product(props) {
 function StripePaymentModal(props) {
     return (
         <div>
-            <StripeContainer data={props.data} />
+            <StripeContainer
+                data={props.data}
+                loading={() => props.loading()}
+                closeLoading={() => props.closeLoading()}
+            />
         </div>
     )
 }

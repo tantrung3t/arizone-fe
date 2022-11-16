@@ -3,19 +3,44 @@ import logo from '../image/logo.svg'
 import { ToastContainer, toast } from 'react-toastify';
 import { fetchToken, onMessageListener } from '../firebase';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import axios from 'axios';
+
 
 export default function SideBarBusiness(props) {
-    const handleLogOut = () => {
-        localStorage.clear()
-        window.location.replace("/")
-    }
+    const handleLogOut = async () => {
+        var config = {
+            method: 'delete',
+            url: process.env.REACT_APP_HOST + '/device/add/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            }
+        };
 
+        await axios(config)
+            .then(function (response) {
+                localStorage.clear()
+                window.location.replace("/")
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
     const [isTokenFound, setTokenFound] = useState(false);
-    fetchToken(setTokenFound);
+
     onMessageListener().then(payload => {
         console.log(payload);
         toastNotification()
     }).catch(err => console.log('failed: ', err));
+
+    const sendTokenDevice = (token) => {
+        console.log(token)
+    }
+
+    useEffect(() => {
+        fetchToken(setTokenFound);
+    }, [])
+
 
     const toastNotification = () => toast.info('Bạn có đơn hàng mới!', {
         position: "bottom-right",
@@ -26,7 +51,7 @@ export default function SideBarBusiness(props) {
         draggable: true,
         progress: undefined,
         theme: "colored",
-        });
+    });
 
     return (
         <div>
