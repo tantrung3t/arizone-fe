@@ -41,9 +41,49 @@ export default function Checkout(props) {
 
     const [dataOrder, setDataOrder] = useState()
 
-    const onlinePayment = () => {
+    const onlinePayment = async () => {
         let order = getDataOrder()
-        setModalHide("modal")
+
+        var config = {
+            method: 'get',
+            url: HOST + '/user/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                if (response.data.stripe_customer) {
+                    loading()
+                    var config = {
+                        method: 'post',
+                        url: HOST + '/order/create/online/save/',
+                        headers: {
+                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                            'Content-Type': 'application/json'
+                        },
+                        data: order
+                    };
+                    axios(config)
+                        .then(function (response) {
+                            closeLoading()
+                            history.push("/customer/order")
+
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+
+                }
+                else {
+                    setModalHide("modal")
+                }
+            })
+            .catch(function (error) {
+
+            });
+
+
     }
     const getDataOrder = () => {
         let productOrder = []
