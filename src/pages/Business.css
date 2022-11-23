@@ -188,7 +188,7 @@
     width: 50px;
     height: 50px;
     margin: auto;
-    object-fit: cover;
+    object-fit: scale-down;
 }
 
 .business-product-store p:nth-child(1) {
@@ -241,6 +241,7 @@
 
 
 .business-add-product {
+    position: relative;
     margin: auto;
     width: 95%;
     background-color: #fff;
@@ -444,4 +445,115 @@ i {
 
 @keyframes spin{
     100%{-webkit-transform: rotate(360deg);}
+}
+
+
+.list-product-order p:nth-child(1){
+    width: 40%;
+    text-align: center;
+    background-color: rgb(215, 213, 213);
+    border: 2px solid rgb(183, 183, 183);
+}
+.list-product-order p:nth-child(2){
+    width: 20%;
+    text-align: center;
+    background-color: rgb(215, 213, 213);
+    border-top: 2px solid rgb(183, 183, 183);
+    border-bottom: 2px solid rgb(183, 183, 183);
+    border-right: 2px solid rgb(183, 183, 183);
+}
+.list-product-order p:nth-child(3){
+    width: 20%;
+    text-align: center;
+    background-color: rgb(215, 213, 213);
+    border-top: 2px solid rgb(183, 183, 183);
+    border-bottom: 2px solid rgb(183, 183, 183);
+    border-right: 2px solid rgb(183, 183, 183);
+}
+.list-product-order p:nth-child(4){
+    width: 20%;
+    text-align: center;
+    background-color: rgb(215, 213, 213);
+    border-top: 2px solid rgb(183, 183, 183);
+    border-bottom: 2px solid rgb(183, 183, 183);
+    border-right: 2px solid rgb(183, 183, 183);
+}
+
+.list-product-order div:nth-child(1){
+    width: 40%;
+    padding-left: 10px;
+    
+    border: 1px solid rgb(183, 183, 183);
+}
+.list-product-order div:nth-child(2){
+    width: 20%;
+    text-align: center;
+    
+    border-top: 1px solid rgb(183, 183, 183);
+    border-bottom: 1px solid rgb(183, 183, 183);
+    border-right: 1px solid rgb(183, 183, 183);
+}
+.list-product-order div:nth-child(3){
+    width: 20%;
+    text-align: center;
+    
+    border-top: 1px solid rgb(183, 183, 183);
+    border-bottom: 1px solid rgb(183, 183, 183);
+    border-right: 1px solid rgb(183, 183, 183);
+}
+.list-product-order div:nth-child(4){
+    width: 20%;
+    text-align: center;
+    
+    border-top: 1px solid rgb(183, 183, 183);
+    border-bottom: 1px solid rgb(183, 183, 183);
+    border-right: 1px solid rgb(183, 183, 183);
+}
+
+.list-product-order span:nth-child(1){
+    width: 80%;
+    text-align: right;
+    padding-right: 10px;
+    
+    border: 1px solid rgb(183, 183, 183);
+}
+.list-product-order span:nth-child(2){
+    width: 20%;
+    text-align: center;
+    
+    border-top: 1px solid rgb(183, 183, 183);
+    border-bottom: 1px solid rgb(183, 183, 183);
+    border-right: 1px solid rgb(183, 183, 183);
+}
+
+
+.min-width-550{
+    min-height: 43rem;
+}
+
+
+.business-order-action{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.order-info{
+    width: 40%;
+}
+
+.loading{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    background-color: gray;
+    opacity: 0.6;
+    z-index: 201;
+}
+
+.loading div{
+    margin: auto;
+    margin-top: 300px;
 }

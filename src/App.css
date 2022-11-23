@@ -48,9 +48,9 @@ body {
   height: 600px;
 }
 
-/* .leaflet-routing-container {
+.leaflet-routing-container {
   display: none;
-} */
+}
 
 .containerStyle {
   height: '400px';
@@ -62,6 +62,14 @@ body {
 
 .justify-content-sb-only {
   justify-content: space-between;
+}
+
+.justify-content-ct-only {
+  justify-content: center;
+}
+
+.justify-content-sa-only {
+  justify-content: space-around;
 }
 
 .justify-content-flex-end-only {

@@ -41,6 +41,8 @@ export default function PaymentForm(props) {
             card: elements.getElement(CardElement)
         })
 
+        console.log(paymentMethod.id)
+
         const data = {
             "payment": paymentMethod.id,
             "cart_id": props.data.cart_id,

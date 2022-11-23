@@ -27,6 +27,7 @@ import BusinessSetting from './pages/BusinessSetting';
 import MapDirection from './pages/MapDirection'
 import BusinessRegister from './pages/BusinessRegister';
 import BusinessDetailProduct from './pages/BusinessDetailProduct';
+import BusinessDetailOrder from './pages/BusinessDetailOrder';
 
 const HOST = process.env.REACT_APP_HOST
 
@@ -205,6 +206,8 @@ function Business() {
       </Route>
       <Route path={`${path}/orders/`} component={BusinessOrder}>
       </Route>
+      <Route path={`${path}/order/:id`} component={DetailOrder}>
+      </Route>
       <Route path={`${path}/transactions/`} component={BusinessTransaction}>
       </Route>
       <Route path={`${path}/settings/`} component={BusinessSetting}>
@@ -215,6 +218,12 @@ function Business() {
     let { id } = useParams();
     return (
       <BusinessDetailProduct id={id} />
+    )
+  }
+  function DetailOrder() {
+    let { id } = useParams();
+    return (
+      <BusinessDetailOrder id={id} />
     )
   }
 }

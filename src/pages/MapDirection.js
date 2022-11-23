@@ -10,6 +10,7 @@ import './Mapping.css'
 
 export default function MapDirection(props) {
     console.log(props.data)
+
     return (
         <div>
             <header>
@@ -43,10 +44,19 @@ export default function MapDirection(props) {
 }
 
 const createRoutineMachineLayer = (props) => {
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const storeLongitude = urlParams.get('longitude')
+    const storeLatitude = urlParams.get('latitude')
+
+    const latitude = urlParams.get('mylat')
+    const longitude = urlParams.get('mylong')
+
     const instance = L.Routing.control({
         waypoints: [
-            L.latLng(10.036100, 105.788033),
-            L.latLng(10.047000, 105.788033)
+            L.latLng(storeLatitude, storeLongitude),
+            L.latLng(10.0309036, 105.7692527)
         ],
         lineOptions: {
             styles: [{ color: "red", weight: 6 }]

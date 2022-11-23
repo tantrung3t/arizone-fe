@@ -6,6 +6,7 @@ import './StoreDetail.css'
 import { useState, useEffect } from 'react';
 import { Button } from 'flowbite-react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const apiProduct = [
     {
@@ -38,12 +39,48 @@ const apiProduct = [
     },
 ]
 
+const HOST = process.env.REACT_APP_HOST
+
 export default function StoreDetail(props) {
+
+    const [store, setStore] = useState(
+        {
+            "id": "",
+            "user": {
+                "full_name": "",
+                "permission": "",
+                "phone": "",
+                "address": "",
+                "image": "",
+                "stripe_customer": null
+            },
+            "longitude": "",
+            "latitude": ""
+        }
+    )
     const [products, setProducts] = useState(apiProduct)
 
     useEffect(() => {
         window.scrollTo(0, 0)
+        getStore()
     }, [])
+
+    const getStore = async () => {
+        var config = {
+            method: 'get',
+            url: HOST + '/store/' + props.id,
+            headers: {}
+        };
+
+        await axios(config)
+            .then(function (response) {
+                setStore(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    }
 
     const listProduct = () => {
         let element = products.map((product, index) => {
@@ -67,7 +104,7 @@ export default function StoreDetail(props) {
             </header>
             <main>
                 <div className='body-container'>
-                    <StoreInfo />
+                    <StoreInfo store={store} />
                     <div className='home-best-seller'>
                         <p className="text-4xl m-9 font-bold text-gray-900 dark:text-white">
                             Tất cả sản phẩm
@@ -91,7 +128,26 @@ export default function StoreDetail(props) {
     )
 }
 
+
 function StoreInfo(props) {
+
+    const link = "/map/direct/?longitude=" + props.store.longitude + '&latitude=' + props.store.latitude
+
+    const [url, setURL] = useState()
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            console.log("NOT")
+        }
+        function showPosition(position) {
+            var mylat = position.coords.latitude
+            var mylong = position.coords.longitude
+            setURL('&mylat=' + mylat + '&mylong=' + mylong)
+        }
+
+    }, [])
+
     return (
         <div className='store-detail-cover'>
             <div className='store-business'>
@@ -99,18 +155,18 @@ function StoreInfo(props) {
                     <div className='store-business-tab-1'>
                         <div>
                             <img
-                                src="https://media.istockphoto.com/photos/wild-grass-in-the-mountains-at-sunset-picture-id1322277517?k=20&m=1322277517&s=612x612&w=0&h=ZdxT3aGDGLsOAn3mILBS6FD7ARonKRHe_EKKa-V-Hws="
+                                src={props.store.user.image}
                                 alt="store"
                             />
                         </div>
                         <div className='store-business-address'>
                             <p className='text-2xl font-bold text-gray-900 dark:text-white'>
-                                Cửa hàng Hoà Bình Thịnh Vượng
+                                {props.store.user.full_name}
                             </p>
                             <p className='text-mx font-bold text-gray-600 dark:text-white'>
-                                127/387 Nguyễn Trải, Hưng Lợi, Ninh Kiều, Cần Thơ
+                                {props.store.user.address}
                             </p>
-                            <Link to={"/map/direct"} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                            <Link to={link + url} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                 Xem đường đi
                             </Link>
                         </div>

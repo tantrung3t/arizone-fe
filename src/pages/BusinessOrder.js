@@ -3,6 +3,7 @@ import './Business.css'
 import { Dropdown } from 'flowbite-react';
 import SideBarBusiness from '../components/SideBarBusiness';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 
 const HOST = process.env.REACT_APP_HOST
@@ -11,6 +12,8 @@ export default function BusinessOrder() {
     const [statusFilter, setStatusFilter] = useState("Tất cả")
     const [product, setProduct] = useState([])
     const [showAddProduct, setShowAddProduct] = useState("business-product")
+    const [next, setNext] = useState()
+    const [previous, setPrevious] = useState()
     const handleFilter = (e, status) => {
         console.log(status)
         if (status === "all") {
@@ -44,6 +47,8 @@ export default function BusinessOrder() {
         await axios(config)
             .then(function (response) {
                 setOrder(response.data.results)
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
             })
             .catch(function (error) {
                 console.log(error);
@@ -61,7 +66,7 @@ export default function BusinessOrder() {
                 full_name={item.full_name}
                 payment={item.payment}
                 status={item.status}
-                total={item.total}  
+                total={item.total}
             />
         })
         return element;
@@ -69,6 +74,46 @@ export default function BusinessOrder() {
     const addProduct = () => {
         setShowAddProduct("business-product-hide")
     }
+
+    const nextPage = async () => {
+        var config = {
+            method: 'get',
+            url: next,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            }
+        };
+        await axios(config)
+            .then(function (response) {
+                setOrder(response.data.results)
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    const previousPage = async () => {
+        var config = {
+            method: 'get',
+            url: previous,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            }
+        };
+
+        await axios(config)
+            .then(function (response) {
+                setOrder(response.data.results)
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     return (
         <div>
             <div className='display-flex'>
@@ -143,10 +188,10 @@ export default function BusinessOrder() {
                         {listProduct()}
                     </div>
                     <div className='pagination'>
-                        <button type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <button onClick={previousPage} className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                             Trang trước
                         </button>
-                        <button type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <button onClick={nextPage} className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                             Trang kế
                         </button>
                     </div>
@@ -174,14 +219,14 @@ function StoreUser(props) {
             )
         } else if (props.status === "shipping") {
             return (
-                <p className='text-base font-semibold text-yellow-500 dark:text-gray-300'>
+                <p className='text-base font-semibold text-blue-500 dark:text-gray-300'>
                     Chấp nhận
                 </p>
             )
         } else {
             return (
-                <p className='text-base font-semibold text-blue-500 dark:text-gray-300'>
-                    Chờ xử lý
+                <p className='text-base font-semibold text-yellow-500 dark:text-gray-300'>
+                    Chờ chấp nhận
                 </p>
             )
         }
@@ -219,10 +264,12 @@ function StoreUser(props) {
                     </p>
                 )
             }
-            <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
-                <button onClick={showAction}>
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg>
-                </button>
+            <p>
+                <Link to={"/business/order/" + props.id} className='text-base font-semibold text-gray-600 dark:text-gray-300'>
+                    <button onClick={showAction}>
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg>
+                    </button>
+                </Link>
             </p>
         </div>
     )
