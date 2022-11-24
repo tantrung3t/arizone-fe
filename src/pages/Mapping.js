@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import { createControlComponent } from "@react-leaflet/core";
 import "leaflet-routing-machine";
@@ -11,6 +12,7 @@ import axios from "axios";
 const HOST = process.env.REACT_APP_HOST
 
 function Mapping() {
+
 
   const [position, setPosition] = useState([])
   const [latitude, setLatitude] = useState(0)
@@ -75,7 +77,7 @@ function Mapping() {
         <Header></Header>
       </header>
       <main>
-        <div className="body-container">
+        <div className="body-container map-container">
           {
             longitude ? (
               <MapContainer center={[latitude, longitude]} zoom={14} scrollWheelZoom={true}>
@@ -96,6 +98,7 @@ function Mapping() {
     </div>
   );
 }
+
 
 const createRoutineMachineLayer = (props) => {
   const instance = L.Routing.control({

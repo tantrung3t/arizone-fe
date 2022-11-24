@@ -39,6 +39,12 @@ function App() {
       image: null
     }
   )
+
+  const [location, setLocation] = useState({
+    "latitude": "",
+    "longitude": ""
+  })
+
   const [cart, setCart] = useState(0)
   const getToken = async () => {
     let data = {
@@ -108,7 +114,7 @@ function App() {
 
   return (
     <Router>
-      <StoreContext.Provider value={{ user, setUser, cart, setCart }}>
+      <StoreContext.Provider value={{ user, setUser, cart, setCart, location, setLocation }}>
         <Router>
           <Route path="/login" exact component={Login}>
           </Route>

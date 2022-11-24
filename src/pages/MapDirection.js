@@ -17,7 +17,7 @@ export default function MapDirection(props) {
                 <Header></Header>
             </header>
             <main>
-                <div className="body-container">
+                <div className="body-container map-container">
                     <MapContainer center={[10.0362005, 105.788033]} zoom={16} scrollWheelZoom={true}>
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -55,8 +55,10 @@ const createRoutineMachineLayer = (props) => {
 
     const instance = L.Routing.control({
         waypoints: [
-            L.latLng(storeLatitude, storeLongitude),
-            L.latLng(10.0309036, 105.7692527)
+            L.latLng(latitude, longitude),
+            L.latLng(storeLatitude, storeLongitude)
+            // L.latLng(10.0309036, 105.7692527)
+            
         ],
         lineOptions: {
             styles: [{ color: "red", weight: 6 }]
