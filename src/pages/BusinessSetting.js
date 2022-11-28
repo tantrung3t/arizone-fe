@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import './Business.css'
-import { Dropdown } from 'flowbite-react';
 import SideBarBusiness from '../components/SideBarBusiness';
 import './CustomerProfile.css'
 import axios from 'axios';
@@ -10,17 +9,15 @@ import { ToastContainer, toast } from 'react-toastify';
 import { StoreContext } from "../store/store";
 import { useContext } from "react";
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker} from 'react-leaflet';
 import { useMapEvents } from "react-leaflet";
-import L from "leaflet";
-import { createControlComponent } from "@react-leaflet/core";
 import './Mapping.css'
 
 const HOST = process.env.REACT_APP_HOST
 
 export default function BusinessSetting() {
 
-    const { location, setLocation } = useContext(StoreContext)
+    const { location } = useContext(StoreContext)
     const [image, setImage] = useState("")
     const [imageUpload, setImageUpload] = useState("")
 
@@ -33,7 +30,7 @@ export default function BusinessSetting() {
         // getBusinessInfo()
         const data = JSON.parse(localStorage.getItem("info"))
         setImage(HOST + data.user.image)
-        setAddress(data.user.address)
+        setAddress(data.address) 
         setNameStore(data.user.full_name)
         setLatitude(data.latitude)
         setLongitude(data.longitude)
@@ -290,8 +287,8 @@ export default function BusinessSetting() {
 
 
 const LocationFinderDummy = () => {
-    const { location, setLocation } = useContext(StoreContext)
-    const map = useMapEvents({
+    const { setLocation } = useContext(StoreContext)
+    useMapEvents({
         click(e) {
             // console.log(e.latlng.lat.toFixed(7));
             // console.log(e.latlng.lng.toFixed(7));

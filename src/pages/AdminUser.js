@@ -123,7 +123,7 @@ export default function AdminUser() {
                 setAccount(response.data.results)
             })
             .catch(function (error) {
-                
+
             });
     }
 
@@ -189,7 +189,6 @@ export default function AdminUser() {
 
     const handleActive = async (id) => {
         var data = JSON.stringify({
-            "is_active": true,
             "business_status": "active"
         });
         var config = {
@@ -212,7 +211,7 @@ export default function AdminUser() {
     }
     const handleBlock = async (id) => {
         var data = JSON.stringify({
-            "is_active": false
+            "business_status": "lock"
         });
         var config = {
             method: 'put',
@@ -335,23 +334,23 @@ export default function AdminUser() {
 function StoreUser(props) {
     const [action, setAction] = useState("admin-action-hide")
     const showStatus = () => {
-        if (props.data.is_active === false) {
+        if (props.data.business_status === "pending") {
             return (
-                <p className='text-base font-semibold text-red-500 dark:text-gray-300'>
-                    Block
+                <p className='text-base font-semibold text-blue-500 dark:text-gray-300'>
+                    Đang chờ
                 </p>
             )
         }
         else if (props.data.business_status === "active") {
             return (
                 <p className='text-base font-semibold text-green-500 dark:text-gray-300'>
-                    Active
+                    Kích hoạt
                 </p>
             )
         } else {
             return (
-                <p className='text-base font-semibold text-blue-500 dark:text-gray-300'>
-                    Pending
+                <p className='text-base font-semibold text-red-500 dark:text-gray-300'>
+                    Đã khoá
                 </p>
             )
         }

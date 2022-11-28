@@ -201,6 +201,7 @@ export default function BusinessProduct() {
                 image={product.image}
                 is_block={product.is_block}
                 is_active={product.is_active}
+                business_status={product.created_by.business_status}
                 sold={product.sold}
                 amount={product.amount}
 
@@ -321,7 +322,8 @@ export default function BusinessProduct() {
 function StoreUser(props) {
     const [action, setAction] = useState("business-action-hide")
     const showStatus = () => {
-        if (props.is_block) {
+
+        if (props.is_block || props.business_status === "lock") {
             return (
                 <p className='text-base font-semibold text-red-500 dark:text-gray-300'>
                     Bị khoá

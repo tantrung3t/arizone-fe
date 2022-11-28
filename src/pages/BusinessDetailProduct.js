@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import SideBarBusiness from "../components/SideBarBusiness";
 import './Business.css'
+import './Checkout.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useHistory } from "react-router-dom";
@@ -10,11 +11,82 @@ import { useHistory } from "react-router-dom";
 const HOST = process.env.REACT_APP_HOST
 
 export default function BusinessDetailProduct(props) {
+    const history = useHistory();
+    const [modalHide, setModalHide] = useState("modal hide")
+
+    const openModel = () => {
+        setModalHide("modal")
+    }
+
+    const handleCancel = () => {
+        setModalHide("modal hide")
+    }
+
+    const handleDelete = (id) => {
+        setModalHide("modal hide")
+        submitDelete()
+    }
+
+    const submitDelete = async () => {
+        var config = {
+            method: 'delete',
+            url: HOST + '/business/product/' + props.id,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+
+        await axios(config)
+            .then(function (response) {
+                toastWarning()
+                setTimeout(() => {
+                    history.push("/business/products/");
+                }, 2000);
+            })
+            .catch(function (error) {
+                toastError()
+            });
+    }
+
+    const toastWarning = () => toast.warn('Sản phẩm đã được xoá!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+    });
+
+    const toastError = () => toast.error('Lỗi rồi, thử lại sau nhé!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+    });
+
     return (
         <div>
             <div className='display-flex'>
                 <SideBarBusiness BusinessProduct="true" />
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <div className="business-container">
                 <div className="business-add-product">
                     <Link to="/business/products/" className='display-flex-only hover:text-blue-700'>
@@ -24,20 +96,38 @@ export default function BusinessDetailProduct(props) {
                             Trở lại
                         </p>
                     </Link>
-                    <AddProduct id={props.id} />
+                    <AddProduct
+                        id={props.id}
+                        openModel={() => openModel()}
+                    />
                 </div>
             </div>
-
+            <div className={modalHide}>
+                <div className="modal__inner">
+                    <div className="modal__body">
+                        <p className="text-gray-700 font-medium text-lg">
+                            Sản phẩm đã chọn sẽ được xoá?
+                        </p>
+                    </div>
+                    <div className="modal__footer">
+                        <button onClick={handleCancel} className="ml-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Huỷ
+                        </button>
+                        <button onClick={handleDelete} className="ml-5 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                            Vẫn xoá
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
 
 function AddProduct(props) {
-    const history = useHistory();
+    
     const [image, setImage] = useState("");
     const [imageUpload, setImageUpload] = useState("")
     const [isUploaded, setIsUploaded] = useState(false);
-
 
     const [category, setCategory] = useState([])
     // <option value="1">Phân bón</option>
@@ -218,40 +308,10 @@ function AddProduct(props) {
         }
     }
 
-    const handleDelete = async () => {
-        var config = {
-            method: 'delete',
-            url: HOST + '/business/product/' + props.id,
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-            }
-        };
 
-        await axios(config)
-            .then(function (response) {
-                toastWarning()
-                setTimeout(() => {
-                    history.push("/business/products/");
-                  }, 1500);
-            })
-            .catch(function (error) {
-                toastError()
-            });
-    }
     return (
         <form onSubmit={handleSubmit}>
-            <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="colored"
-            />
+
             <div className='display-flex-only'>
                 <div className='business-add-info-product'>
                     <div className='display-flex-only'>
@@ -444,7 +504,7 @@ function AddProduct(props) {
             </div>
             <div>
                 {
-                    !productDetail.is_block ? (
+                    !(productDetail.is_block || productDetail.created_by.business_status === "lock") ? (
                         <label className="inline-flex relative items-center cursor-pointer">
                             <input type="checkbox" defaultChecked={productDetail.is_active} name="active" id="active" className="sr-only peer" />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
@@ -472,7 +532,7 @@ function AddProduct(props) {
                 <div className='business-add-product-button-form'>
                     <button
                         type="button"
-                        onClick={handleDelete}
+                        onClick={props.openModel}
                         className="ml-5 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
                         Xoá
                     </button>
