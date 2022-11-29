@@ -1,5 +1,5 @@
 import { Footer, Avatar } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Account from "./Account";
 import Cart from "./Cart";
 import { StoreContext } from "../store/store";
@@ -10,10 +10,14 @@ import './Header.css'
 
 export default function Header(props) {
     const { user } = useContext(StoreContext)
+    const { search, setSearch} = useContext(StoreContext)
+    const history = useHistory()
     const handleSearch = (e) => {
         e.preventDefault()
         const dataSubmit = new FormData(e.currentTarget);
         console.log(dataSubmit.get('search-navbar'))
+        setSearch(dataSubmit.get('search-navbar'))
+        history.push("/products/list?search=" + dataSubmit.get('search-navbar'));
     }
     return (
         <Footer container={true} className="navbar">
@@ -29,7 +33,7 @@ export default function Header(props) {
                 </Link>
             </div>
             <div>
-                <Link to='/login' className="text-base font-medium text-gray-900 dark:text-white hover:text-blue-600">
+                <Link to='/products/list' className="text-base font-medium text-gray-900 dark:text-white hover:text-blue-600">
                     Sản phẩm
                 </Link>
 

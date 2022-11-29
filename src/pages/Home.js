@@ -145,14 +145,14 @@ export default function Home() {
                             </div>
                         </Carousel>
                     </div>
-                    <div className='home-best-seller'>
+                    {/* <div className='home-best-seller'>
                         <p className="home-title text-4xl font-bold text-gray-900 dark:text-white">
                             Sản phẩm bán chạy
                         </p>
                         <div className='home-best-seller-product'>
                             {listProductSale()}
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className='home-best-seller'>
                         <p className="home-title text-4xl font-bold text-gray-900 dark:text-white">

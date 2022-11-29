@@ -28,6 +28,7 @@ import MapDirection from './pages/MapDirection'
 import BusinessRegister from './pages/BusinessRegister';
 import BusinessDetailProduct from './pages/BusinessDetailProduct';
 import BusinessDetailOrder from './pages/BusinessDetailOrder';
+import HomeProduct from './pages/HomeProduct';
 
 const HOST = process.env.REACT_APP_HOST
 
@@ -44,6 +45,8 @@ function App() {
     "latitude": "",
     "longitude": ""
   })
+
+  const [search, setSearch] = useState()
 
   const [cart, setCart] = useState(0)
   const getToken = async () => {
@@ -114,7 +117,7 @@ function App() {
 
   return (
     <Router>
-      <StoreContext.Provider value={{ user, setUser, cart, setCart, location, setLocation }}>
+      <StoreContext.Provider value={{ user, setUser, cart, setCart, location, setLocation, search, setSearch }}>
         <Router>
           <Route path="/login" exact component={Login}>
           </Route>
@@ -146,6 +149,8 @@ function Guest() {
 
       <Route exact path={path} component={Home}>
       </Route>
+      <Route path="/products/:string" component={Products}>
+      </Route>
       <Route path="/product" component={Product}>
       </Route>
       <Route path="/store" component={Store}>
@@ -155,6 +160,13 @@ function Guest() {
       <Route path="/map" component={Mapping}>
       </Route>
     </Switch>
+  )
+}
+
+function Products() {
+  let { string } = useParams();
+  return (
+    <HomeProduct data={string} />
   )
 }
 
