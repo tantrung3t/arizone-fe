@@ -34,13 +34,17 @@ export default function Checkout(props) {
     )
     const [modalHide, setModalHide] = useState("modal hide")
     const [modalAddress, setModalAddress] = useState("modal hide")
-    const [name, setName] = useState()
-    const [phone, setPhone] = useState()
-    const [address, setAddress] = useState()
+    const [name, setName] = useState(user.full_name)
+    const [phone, setPhone] = useState(user.phone)
+    const [address, setAddress] = useState(user.address)
 
     const [loadingScreen, setLoadingScreen] = useState("hide")
 
     const [dataOrder, setDataOrder] = useState()
+
+    const [listAddress, setListAddress] = useState([])
+
+    const [addAddress, setAddAddress] = useState(true)
 
     const onlinePayment = async () => {
         let order = getDataOrder()
@@ -148,6 +152,7 @@ export default function Checkout(props) {
     const closeModal = () => {
         setModalHide("modal hide")
         setModalAddress("modal hide")
+        setAddAddress(true)
     }
 
     const getUser = async () => {
@@ -169,10 +174,55 @@ export default function Checkout(props) {
 
             });
     }
+
+    const getAddress = async () => {
+        var config = {
+            method: 'get',
+            url: HOST + '/address/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+
+        axios(config)
+            .then(function (response) {
+                setListAddress(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
     useEffect(() => {
         setProduct(JSON.parse(localStorage.getItem("order")))
         getUser()
+        getAddress()
     }, [])
+
+    const setInfoCheckout = (name, phone, address) => {
+        setName(name)
+        setPhone(phone)
+        setAddress(address)
+        closeModal()
+    }
+
+    const deleteAddress = (id) => {
+        console.log(id)
+        var config = {
+            method: 'delete',
+            url: HOST + '/address/' + id + '/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        };
+
+        axios(config)
+            .then(function (response) {
+                getAddress()
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     const listProduct = () => {
         if (product.total) {
@@ -189,6 +239,22 @@ export default function Checkout(props) {
         }
         return <div></div>
     }
+    const showListAddress = () => {
+
+        let element = listAddress.map((item, index) => {
+            return <Address
+                key={index}
+                id={item.id}
+                name={item.name}
+                phone={item.phone}
+                address={item.address}
+                default={false}
+                setInfoCheckout={(name, phone, address) => { setInfoCheckout(name, phone, address) }}
+                deleteAddress={(id) => { deleteAddress(id) }} />
+        })
+        return element;
+
+    }
 
     const changeName = (e) => {
         setName(e.target.value)
@@ -202,6 +268,43 @@ export default function Checkout(props) {
 
     const chooseAddress = () => {
         setModalAddress("modal")
+    }
+
+    const showAddAddress = () => {
+        setAddAddress(false)
+    }
+
+    const handleSubmitAddAddress = (e) => {
+        e.preventDefault()
+
+        const dataSubmit = new FormData(e.currentTarget);
+
+        let data = {
+            "name": dataSubmit.get('address-name'),
+            "phone": dataSubmit.get('address-phone'),
+            "address": dataSubmit.get('address-address')
+        }
+
+        var config = {
+            method: 'post',
+            url: HOST + '/address/',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+
+        axios(config)
+            .then(function (response) {
+                getAddress()
+                setAddAddress(true)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+
     }
 
     return (
@@ -232,67 +335,57 @@ export default function Checkout(props) {
                                     </svg>
                                 </button>
                             </div>
-                            <div className="modal__body checkout-list-address">
-                                <div className='checkout-cart-address hover:bg-gray-100 border border-gray-300 rounded-lg'>
-                                    <div>
-                                        <p className="text-base font-semibold">
-                                            Trần Tấn Trung
-                                        </p>
-                                        <p className="text-base font-semibold">
-                                            0327171195
-                                        </p>
-                                        <p className="text-base font-semibold">
-                                            Xuân lộc trung thành
-                                        </p>
-                                    </div>
-                                    <div className='checkout-cart-address-action'>
-                                        <p className='text-blue-800 text-sm font-semibold'>
-                                            Mặc định
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className='checkout-cart-address hover:bg-gray-100 border border-gray-300 rounded-lg'>
-                                    <div>
-                                        <p className="text-base font-semibold">
-                                            Trần Tấn Trung
-                                        </p>
-                                        <p className="text-base font-semibold">
-                                            0327171195
-                                        </p>
-                                        <p className="text-base font-semibold">
-                                            Xuân lộc trung thành
-                                        </p>
-                                    </div>
-                                    <div className='checkout-cart-address-action'>
-                                    <p className='text-red-800 text-sm font-semibold'>
-                                            Xoá
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className='checkout-cart-address hover:bg-gray-100 border border-gray-300 rounded-lg'>
-                                    <div>
-                                        <p className="text-base font-semibold">
-                                            Trần Tấn Trung
-                                        </p>
-                                        <p className="text-base font-semibold">
-                                            0327171195
-                                        </p>
-                                        <p className="text-base font-semibold">
-                                            Xuân lộc trung thành
-                                        </p>
-                                    </div>
-                                    <div className='checkout-cart-address-action'>
-                                    <p className='text-red-800 text-sm font-semibold'>
-                                           Xoá
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='checkout-add-address'>
-                                <button type="button" class="text-blue-800 hover:text-blue-800 border border-blue-700 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800">
-                                    Thêm địa chỉ
-                                </button>
-                            </div>
+                            {
+                                addAddress ? (
+                                    <>
+                                        <div className="modal__body checkout-list-address">
+                                            <Address
+                                                name={user.full_name}
+                                                phone={user.phone}
+                                                address={user.address}
+                                                default={true}
+                                                setInfoCheckout={(name, phone, address) => { setInfoCheckout(name, phone, address) }} />
+                                            {showListAddress()}
+                                        </div>
+                                        <div className='checkout-add-address'>
+                                            <button onClick={showAddAddress} type="button" className="text-blue-800 hover:text-blue-800 border border-blue-700 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800">
+                                                Thêm địa chỉ
+                                            </button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <form onSubmit={handleSubmitAddAddress}>
+                                        <div className="modal__body checkout-list-address">
+                                            <input
+                                                type="text"
+                                                id="address-name"
+                                                name="address-name"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                placeholder="Họ và Tên"
+                                                required />
+                                            <input
+                                                type="number"
+                                                id="address-phone"
+                                                name="address-phone"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                placeholder="Số điện thoại"
+                                                required />
+                                            <input
+                                                type="text"
+                                                id="address-address"
+                                                name="address-address"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                placeholder="Địa chỉ nhận hàng"
+                                                required />
+                                        </div>
+                                        <div className='checkout-add-address'>
+                                            <button className="text-blue-800 hover:text-blue-800 border border-blue-700 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800">
+                                                Thêm địa chỉ
+                                            </button>
+                                        </div>
+                                    </form>
+                                )
+                            }
                         </div>
                     </div>
                 </div>
@@ -369,10 +462,11 @@ export default function Checkout(props) {
                                         <input
                                             type="text"
                                             id="name"
+                                            disabled
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             placeholder="Nguyễn Văn A"
                                             onChange={changeName}
-                                            defaultValue={user.full_name}
+                                            defaultValue={name}
                                             required />
                                     </div>
                                     <div>
@@ -381,12 +475,13 @@ export default function Checkout(props) {
                                             Số điện thoại:
                                         </label>
                                         <input
-                                            type="tel"
+                                            type="number"
                                             id="phone"
+                                            disabled
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             placeholder="0123123123"
                                             onChange={changePhone}
-                                            defaultValue={user.phone}
+                                            defaultValue={phone}
                                             required />
                                     </div>
                                     <div>
@@ -397,10 +492,11 @@ export default function Checkout(props) {
                                         <input
                                             type="text"
                                             id="address"
+                                            disabled
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             placeholder="Địa chỉ"
                                             onChange={changeAddress}
-                                            defaultValue={user.address}
+                                            defaultValue={address}
                                             required />
                                     </div>
                                 </form>
@@ -508,6 +604,46 @@ function StripePaymentModal(props) {
                 loading={() => props.loading()}
                 closeLoading={() => props.closeLoading()}
             />
+        </div>
+    )
+}
+
+
+function Address(props) {
+    const setInfo = () => {
+        props.setInfoCheckout(props.name, props.phone, props.address)
+    }
+    const deleteAddress = () => {
+        props.deleteAddress(props.id)
+    }
+    return (
+        <div className='checkout-cart-address hover:bg-gray-100 border border-gray-300 rounded-lg'>
+            <div onClick={setInfo}>
+                <p className="text-base font-semibold">
+                    {props.name}
+                </p>
+                <p className="text-base font-semibold">
+                    {props.phone}
+                </p>
+                <p className="text-base font-semibold">
+                    {props.address}
+                </p>
+            </div>
+            {
+                props.default ? (
+                    <div className='checkout-cart-address-action'>
+                        <p className='text-blue-800 text-sm font-semibold'>
+                            Mặc định
+                        </p>
+                    </div>
+                ) : (
+                    <div className='checkout-cart-address-action'>
+                        <button onClick={deleteAddress} className='text-red-800 text-sm font-semibold'>
+                            Xoá
+                        </button>
+                    </div>
+                )
+            }
         </div>
     )
 }

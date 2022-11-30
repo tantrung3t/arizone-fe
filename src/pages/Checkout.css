@@ -227,7 +227,7 @@ i {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    height: 90px;
+    height: 12  0px;
     margin-bottom: 10px;
     padding-top: 7px;
     padding-left: 10px;
@@ -254,4 +254,14 @@ i {
     margin-top: 15px;
     display: flex;
     justify-content: center;
+}
+
+.checkout-list-address input{
+    margin-bottom: 20px;
+}
+
+.checkout-list-address input[type=number]::-webkit-inner-spin-button,
+.checkout-list-address input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }

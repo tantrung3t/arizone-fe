@@ -10,6 +10,8 @@ import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { data } from 'autoprefixer';
 
+import NoContent from '../components/NoContent';
+
 const HOST = process.env.REACT_APP_HOST
 
 export default function Cart(props) {
@@ -68,43 +70,46 @@ export default function Cart(props) {
                     </div>
                 </div>
                 <div className='body-container'>
-                    {data.length ? (<div className='cart-container'>
-                        <p className='p-5 text-3xl font-bold text-gray-600 dark:text-white'>
-                            Giỏ hàng
-                        </p>
-                        <div className='cart-title'>
-                            <div className='cart-title-product'>
-                                <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                                    Sản phẩm
-                                </p>
+                    {data.length ? (
+                        <div className='cart-container'>
+                            <p className='p-5 text-3xl font-bold text-gray-600 dark:text-white'>
+                                Giỏ hàng
+                            </p>
+                            <div className='cart-title'>
+                                <div className='cart-title-product'>
+                                    <p className='text-xm font-bold text-gray-600 dark:text-white'>
+                                        Sản phẩm
+                                    </p>
+                                </div>
+                                <div className='cart-title-price'>
+                                    <p className='text-xm font-bold text-gray-600 dark:text-white'>
+                                        Đơn giá
+                                    </p>
+                                </div>
+                                <div className='cart-title-amount'>
+                                    <p className='text-xm font-bold text-gray-600 dark:text-white'>
+                                        Số lượng
+                                    </p>
+                                </div>
+                                <div className='cart-title-money'>
+                                    <p className='text-xm font-bold text-gray-600 dark:text-white'>
+                                        Thành tiền
+                                    </p>
+                                </div>
+                                <div className='cart-title-action'>
+                                    <p className='text-xm font-bold text-gray-600 dark:text-white'>
+                                        Hành động
+                                    </p>
+                                </div>
                             </div>
-                            <div className='cart-title-price'>
-                                <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                                    Đơn giá
-                                </p>
-                            </div>
-                            <div className='cart-title-amount'>
-                                <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                                    Số lượng
-                                </p>
-                            </div>
-                            <div className='cart-title-money'>
-                                <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                                    Thành tiền
-                                </p>
-                            </div>
-                            <div className='cart-title-action'>
-                                <p className='text-xm font-bold text-gray-600 dark:text-white'>
-                                    Hành động
-                                </p>
+                            <div className='cart-product-store'>
+                                {listCart()}
                             </div>
                         </div>
-                        <div className='cart-product-store'>
-                            {listCart()}
-                        </div>
-                    </div>
                     ) : (
-                        <div className='cart-404-container'>Khong co</div>
+                        <div className='cart-404-container'>
+                            <NoContent content="Giỏ hàng trống"/>
+                        </div>
                     )
                     }
 
