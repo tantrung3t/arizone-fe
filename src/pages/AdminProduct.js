@@ -9,10 +9,48 @@ const HOST = process.env.REACT_APP_HOST
 
 export default function AdminProduct() {
     const [statusFilter, setStatusFilter] = useState("Tất cả")
+    const [statusCategory, setStatusCategory] = useState("Tất cả")
     const [product, setProduct] = useState([])
     const [next, setNext] = useState()
     const [present, setPresent] = useState(HOST + "/admin/user/list/")
     const [previous, setPrevious] = useState()
+
+    const [category, setCategory] = useState("")
+
+    const handleCategory = (e, category) => {
+        if (category === 1) {
+            setStatusCategory("Phân bón")
+            setCategory("&category=1")
+            
+        } else if (category === 2) {
+            setStatusCategory("Thuốc đặt trị")
+            setCategory("&category=2")
+            
+            
+        } else if (category === 3) {
+            setStatusCategory("Thuốc kích thích")
+            setCategory("&category=3")
+            
+            
+        } else if (category === 4) {
+            setCategory("&category=4")
+            setStatusCategory("Chế phẩm sinh học")
+            
+            
+        }else if (category === 5) {
+            setStatusCategory("Vi sinh")
+            setCategory("&category=5")
+            
+            
+        } else {
+            setStatusCategory("Tất cả")
+            setCategory("")
+            
+        }
+
+        setStatusFilter("Tất cả")
+    }
+
     const handleFilter = (e, status) => {
         console.log(status)
         if (status === "All") {
@@ -30,10 +68,10 @@ export default function AdminProduct() {
         }
     }
     const loadDataFilterActive = async () => {
-        setPresent(HOST + "/admin/product/list/?is_active=true&is_block=false")
+        setPresent(HOST + "/admin/product/list/?is_active=true&is_block=false" + category)
         var config = {
             method: 'get',
-            url: HOST + "/admin/product/list/?is_active=true&is_block=false",
+            url: HOST + "/admin/product/list/?is_active=true&is_block=false" + category,
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
             }
@@ -68,10 +106,10 @@ export default function AdminProduct() {
             });
     }
     const loadDataFilterBlock = async () => {
-        setPresent(HOST + "/admin/product/list/?is_block=true")
+        setPresent(HOST + "/admin/product/list/?is_block=true" + category)
         var config = {
             method: 'get',
-            url: HOST + "/admin/product/list/?is_block=true",
+            url: HOST + "/admin/product/list/?is_block=true" + category,
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
             }
@@ -108,10 +146,10 @@ export default function AdminProduct() {
     }
 
     const loadData = async () => {
-        setPresent(HOST + "/admin/product/list/?ordering=-created_at")
+        setPresent(HOST + "/admin/product/list/?ordering=-created_at" + category)
         var config = {
             method: 'get',
-            url: HOST + "/admin/product/list/?ordering=-created_at",
+            url: HOST + "/admin/product/list/?ordering=-created_at" + category,
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
             }
@@ -238,7 +276,7 @@ export default function AdminProduct() {
     }
     useEffect(() => {
         loadData()
-    }, [])
+    }, [category])
     const listProduct = () => {
         let element = product.map((item, index) => {
             return <StoreUser key={index}
@@ -276,7 +314,43 @@ export default function AdminProduct() {
                         </div>
                         <div className='admin-user-filter'>
                             <Dropdown
-                                label={"Filter: " + statusFilter}
+                                label={"Loại: " + statusCategory}
+                                inline={true}>
+                                <h1 onClick={(e) => handleCategory(e, 0)}>
+                                    <Dropdown.Item>
+                                        <p>Tất cả</p>
+                                    </Dropdown.Item>
+                                </h1>
+                                <h1 onClick={(e) => handleCategory(e, 1)}>
+                                    <Dropdown.Item>
+                                        <p>Phân bón</p>
+                                    </Dropdown.Item>
+                                </h1>
+                                <h1 onClick={(e) => handleCategory(e, 2)}>
+                                    <Dropdown.Item>
+                                        <p>Thuốc đặt trị</p>
+                                    </Dropdown.Item>
+                                </h1>
+                                <h1 onClick={(e) => handleCategory(e, 3)}>
+                                    <Dropdown.Item>
+                                        <p>Thuốc kích thích</p>
+                                    </Dropdown.Item>
+                                </h1>
+                                <h1 onClick={(e) => handleCategory(e, 4)}>
+                                    <Dropdown.Item>
+                                        <p>Chế phẩm sinh học</p>
+                                    </Dropdown.Item>
+                                </h1>
+                                <h1 onClick={(e) => handleCategory(e, 5)}>
+                                    <Dropdown.Item>
+                                        <p>Vi sinh</p>
+                                    </Dropdown.Item>
+                                </h1>
+                            </Dropdown>
+                        </div>
+                        <div className='admin-user-filter'>
+                            <Dropdown
+                                label={"Trạng thái: " + statusFilter}
                                 inline={true}>
                                 <h1 onClick={(e) => handleFilter(e, 'All')}>
                                     <Dropdown.Item>
@@ -291,11 +365,6 @@ export default function AdminProduct() {
                                 <h1 onClick={(e) => handleFilter(e, 'Block')}>
                                     <Dropdown.Item>
                                         <p>Bị khoá</p>
-                                    </Dropdown.Item>
-                                </h1>
-                                <h1 onClick={(e) => handleFilter(e, 'Pending')}>
-                                    <Dropdown.Item>
-                                        <p>Chưa kích hoạt</p>
                                     </Dropdown.Item>
                                 </h1>
                             </Dropdown>

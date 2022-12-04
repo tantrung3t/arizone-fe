@@ -2,23 +2,84 @@ import { useState, useEffect } from 'react';
 import './Business.css'
 import { Dropdown } from 'flowbite-react';
 import SideBarBusiness from '../components/SideBarBusiness';
-
-const data = [
-    {}, {}, {}, {}, {}, {}, {}, {}
-]
+import axios from 'axios';
 
 export default function BusinessTransaction() {
     const [transactions, setTransaction] = useState([])
+    const [next, setNext] = useState()
+    const [previous, setPrevious] = useState()
+
+
     useEffect(() => {
-        setTransaction(data)
+        loadData()
     }, [])
+
+    const loadData = () => {
+        var config = {
+            method: 'get',
+            url: process.env.REACT_APP_HOST + '/transactions/?ordering=-timestamp',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            }
+        };
+
+        axios(config)
+            .then(function (response) {
+                setTransaction(response.data.results)
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     const listTransaction = () => {
         let element = transactions.map((transaction, index) => {
             return <Transaction key={index}
-                id={index}
+                data={transaction}
             />
         })
         return element;
+    }
+
+    const nextPage = () => {
+        var config = {
+            method: 'get',
+            url: next,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            }
+        };
+        axios(config)
+            .then(function (response) {
+                setTransaction(response.data.results)
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    const previousPage = () => {
+        var config = {
+            method: 'get',
+            url: previous,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            }
+        };
+
+        axios(config)
+            .then(function (response) {
+                setTransaction(response.data.results)
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
     return (
         <div>
@@ -57,12 +118,15 @@ export default function BusinessTransaction() {
                             Thời gian
                         </p>
                     </div>
-                    {listTransaction()}
+
+                    <div className='business-product-list'>
+                        {listTransaction()}
+                    </div>
                     <div className='pagination'>
-                        <button type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <button onClick={previousPage} type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                             Trang trước
                         </button>
-                        <button type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <button onClick={nextPage} type="button" className="py-2.5 px-5 mr-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                             Trang kế
                         </button>
                     </div>
@@ -74,22 +138,22 @@ export default function BusinessTransaction() {
 }
 
 function Transaction(props) {
-    let timeStamp = 1666698093
+    let timeStamp = props.data.timestamp
     let dateFormat = new Date(timeStamp * 1000);
     const time = dateFormat.getHours() + ":" + dateFormat.getMinutes() + " " + dateFormat.getDate() + "-" + (dateFormat.getMonth() + 1) + "-" + dateFormat.getFullYear()
     return (
         <div className='business-transaction'>
             <p className='text-sm font-medium text-purple-800 dark:text-gray-300'>
-                pi_3LjaEvLKF56hbvNU0CfJUEDB
+                {props.data.stripe_payment}
             </p>
             <p className='text-sm font-medium text-gray-600 dark:text-gray-300'>
-                Thanh toán cho đơn hàng DH-0001
+                Thanh toán cho đơn hàng {props.data.order}
             </p>
             <p className='text-base font-medium text-green-500 dark:text-gray-300'>
-                1.123.000đ
+                {props.data.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ
             </p>
             <p className='text-sm font-medium text-gray-600 dark:text-gray-300'>
-                tantrung.dmc@gmail.com
+                {props.data.buyer}
             </p>
             <p className='text-sm font-medium text-gray-600 dark:text-gray-300'>
                 {time}

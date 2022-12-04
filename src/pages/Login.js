@@ -3,6 +3,7 @@ import './Login.css'
 import { useState } from "react";
 import axios from "axios";
 import { useContext } from 'react';
+import { Link } from "react-router-dom";
 import { StoreContext } from '../store/store';
 
 const HOST = process.env.REACT_APP_HOST
@@ -169,7 +170,7 @@ export default function Login() {
                                     />
                                 </div>
                             </div>
-                            <div className="mb-10 block">
+                            <div className="mb-5 block">
                                 <div className="mb-3 block">
                                     <Label>Mật khẩu</Label>
                                 </div>
@@ -182,6 +183,13 @@ export default function Login() {
                                         required={true}
                                     />
                                 </div>
+                            </div>
+                            <div className="mb-5 block">
+                                <Link to='/forgot-password'>
+                                    <p className="font-semibold text-gray-800 hover:text-blue-600">
+                                        Quên mật khẩu?
+                                    </p>
+                                </Link>
                             </div>
                             <div className="signin-button">
                                 <div className="mb-10 block ">

@@ -62,11 +62,11 @@ export default function Account(props) {
                             <p>Giỏ hàng</p>
                         </Dropdown.Item>
                     </Link>
-                    <Link to="/customer/change-password">
+                    {/* <Link to="/customer/change-password">
                         <Dropdown.Item>
                             <p>Đổi mật khẩu</p>
                         </Dropdown.Item>
-                    </Link>
+                    </Link> */}
                     <Dropdown.Divider />
                     <button onClick={handleLogOut}>
                         <Dropdown.Item>

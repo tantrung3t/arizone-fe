@@ -80,6 +80,7 @@ export default function CustomerProfile() {
             "full_name": dataSubmit.get("name"),
             "phone": dataSubmit.get('phone'),
             "name": dataSubmit.get('name'),
+            "address": dataSubmit.get('address'),
             "birthday": dataSubmit.get('birthday'),
             "sex": sex,
         }
@@ -143,6 +144,7 @@ export default function CustomerProfile() {
             };
             await axios(config)
                 .then(function (response) {
+                    alert("Upload ảnh thành công")
                     console.log(response.data);
                 })
                 .catch(function (error) {
@@ -219,16 +221,15 @@ export default function CustomerProfile() {
                                 </div>
                                 <div className='customer-profile-container-info-element'>
                                     <label className="block mb-2 text-lg font-medium text-gray-900 dark:text-gray-300">
-                                        Email:
+                                        Địa chỉ:
                                     </label>
                                     <input
-                                        type="email"
-                                        id="email"
-                                        disabled={true}
-                                        name="email"
+                                        type="text"
+                                        id="address"
+                                        name="address"
                                         className="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder='example@host.com'
-                                        defaultValue={profile.email}
+                                        placeholder=''
+                                        defaultValue={profile.address}
                                         required />
                                 </div>
                                 <div className='customer-profile-container-info-element'>

@@ -29,6 +29,7 @@ import BusinessRegister from './pages/BusinessRegister';
 import BusinessDetailProduct from './pages/BusinessDetailProduct';
 import BusinessDetailOrder from './pages/BusinessDetailOrder';
 import HomeProduct from './pages/HomeProduct';
+import ForgotPassword from './pages/ForgotPassword';
 
 const HOST = process.env.REACT_APP_HOST
 
@@ -120,6 +121,8 @@ function App() {
       <StoreContext.Provider value={{ user, setUser, cart, setCart, location, setLocation, search, setSearch }}>
         <Router>
           <Route path="/login" exact component={Login}>
+          </Route>
+          <Route path="/forgot-password" exact component={ForgotPassword}>
           </Route>
           <Route path="/business-register" component={BusinessRegister}>
           </Route>
