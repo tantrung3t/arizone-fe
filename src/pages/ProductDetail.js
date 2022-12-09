@@ -6,7 +6,7 @@ import StartRating from '../components/StartRating';
 import { StoreContext } from '../store/store';
 import { useEffect, useState, useContext, useRef } from 'react';
 import { Avatar } from 'flowbite-react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import StarsRating from 'stars-rating'
@@ -29,6 +29,7 @@ export default function ProductDetail(props) {
             "effect": "",
             "product_by": "",
             "business": {
+                "id": "",
                 "user": {
                     "id": "",
                     "full_name": "",
@@ -83,8 +84,8 @@ export default function ProductDetail(props) {
                             </>
                         ) : (
                             <>
-                                <div>
-                                    404 not found
+                                <div className='page-notfound'>
+
                                 </div>
                             </>
                         )
@@ -99,6 +100,8 @@ export default function ProductDetail(props) {
 }
 
 function Product(props) {
+
+    const history = useHistory()
     const { cart, setCart } = useContext(StoreContext)
     const [value, setValue] = useState(1)
 
@@ -130,7 +133,35 @@ function Product(props) {
 
     const handleBuyProduct = () => {
         if (localStorage.getItem('accessToken') && localStorage.getItem('refreshToken') && localStorage.getItem('role') === "ctm") {
-            console.log(value)
+            let total = 0
+            if(props.data.sale === 0){
+                total = value * props.data.price
+            }
+            else {
+                total = value * props.data.sale
+            }
+            const dataOrder =
+            {   
+                "cart_id": "",
+                "business": props.data.business.id,
+                "total": total,
+                "product": [
+                    {
+                        "id": "",
+                        "product":
+                        {
+                            "id": props.id,
+                            "name": props.data.name,
+                            "image": props.data.image,
+                            "price": props.data.price,
+                            "sale": props.data.sale
+                        },
+                        "quantity": value
+                    }
+                ]
+            }
+            localStorage.setItem("order", JSON.stringify(dataOrder));
+            history.push("/customer/cart/order")
         }
         else {
             toastFailed()
@@ -346,7 +377,7 @@ function Business(props) {
                     <p className='text-mx font-bold text-gray-600 dark:text-white'>
                         {props.data.address}
                     </p>
-                    <Link to="/store/1" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    <Link to={"/store/" + props.data.id} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                         Xem cửa hàng
                     </Link>
                 </div>

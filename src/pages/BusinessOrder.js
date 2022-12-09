@@ -18,14 +18,41 @@ export default function BusinessOrder() {
         console.log(status)
         if (status === "all") {
             setStatusFilter("Tất cả")
+            loadOrder()
         } else if (status === "active") {
             setStatusFilter("Thành công")
+            getDataFilter("success")
         } else if (status === "cancel") {
-
+            getDataFilter("cancel")
             setStatusFilter("Đã huỷ")
-        } else {
-            setStatusFilter("Chờ xử lý")
+        } else if (status === "shipping") {
+            getDataFilter("shipping")
+            setStatusFilter("Chấp nhận")
         }
+        else {
+            setStatusFilter("Chưa xử lý")
+            getDataFilter("pending")
+        }
+    }
+
+    const getDataFilter = (status) => {
+        var config = {
+            method: 'get',
+            url: HOST + '/business/order/list/?ordering=-id&status=' + status,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            }
+        };
+
+        axios(config)
+            .then(function (response) {
+                setOrder(response.data.results)
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
     const handleSearch = (e) => {
         e.preventDefault()
@@ -146,6 +173,11 @@ export default function BusinessOrder() {
                                         <p>Tất cả</p>
                                     </Dropdown.Item>
                                 </h1>
+                                <h1 onClick={(e) => handleFilter(e, 'shipping')}>
+                                    <Dropdown.Item>
+                                        <p>Chấp nhận</p>
+                                    </Dropdown.Item>
+                                </h1>
                                 <h1 onClick={(e) => handleFilter(e, 'active')}>
                                     <Dropdown.Item>
                                         <p>Thành công</p>
@@ -158,14 +190,14 @@ export default function BusinessOrder() {
                                 </h1>
                                 <h1 onClick={(e) => handleFilter(e, 'pending')}>
                                     <Dropdown.Item>
-                                        <p>Chờ xử lý</p>
+                                        <p>Chưa xử lý</p>
                                     </Dropdown.Item>
                                 </h1>
                             </Dropdown>
                         </div>
 
                     </div>
-                    <div className='business-product-title bg-gray-200'>
+                    <div className='business-order-title bg-gray-200'>
                         <p className='text-base font-medium text-gray-600 dark:text-gray-300'>
                             Mã đơn hàng
                         </p>
@@ -226,7 +258,7 @@ function StoreUser(props) {
         } else {
             return (
                 <p className='text-base font-semibold text-yellow-500 dark:text-gray-300'>
-                    Chờ chấp nhận
+                    Chưa xử lý
                 </p>
             )
         }
@@ -242,7 +274,7 @@ function StoreUser(props) {
         }
     }
     return (
-        <div onClick={showDetail} className='business-product-store'>
+        <div onClick={showDetail} className='business-order-store'>
             <p className='text-base font-semibold text-gray-600 dark:text-gray-300'>
                 {props.id}
             </p>

@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const HOST = process.env.REACT_APP_HOST
 
 export default function BusinessProduct() {
-    const [statusFilter, setStatusFilter] = useState("All")
+    const [statusFilter, setStatusFilter] = useState("Tất cả")
     const [product, setProduct] = useState([])
     const [showListProduct, setShowListProduct] = useState("business-product")
     const [showAddProduct, setShowAddProduct] = useState("business-add-product hide")
@@ -202,6 +202,7 @@ export default function BusinessProduct() {
                 is_block={product.is_block}
                 is_active={product.is_active}
                 business_status={product.created_by.business_status}
+                category={product.category}
                 sold={product.sold}
                 amount={product.amount}
 
@@ -284,11 +285,9 @@ export default function BusinessProduct() {
                             Trạng thái
                         </p>
                         <p className='text-base font-medium text-gray-600 dark:text-gray-300'>
-                            Đã bán
+                           Loại sản phẩm
                         </p>
-                        <p className='text-base font-medium text-gray-600 dark:text-gray-300'>
-                            Trong kho
-                        </p>
+                        
                         <p>
                         </p>
                     </div>
@@ -367,10 +366,7 @@ function StoreUser(props) {
             </p>
             {showStatus()}
             <p className='text-sm font-semibold text-gray-600 dark:text-gray-300'>
-                {props.sold}
-            </p>
-            <p className='text-sm font-semibold text-gray-600 dark:text-gray-300'>
-                {props.amount}
+                {props.category}
             </p>
             <p>
                 <Link to={"/business/product/" + props.id} className='text-base font-semibold text-gray-600 dark:text-gray-300 hover:text-blue-700'>

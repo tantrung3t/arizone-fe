@@ -43,6 +43,30 @@ export default function BusinessTransaction() {
         return element;
     }
 
+    const handleSearch = (e) => {
+        e.preventDefault()
+        const dataSubmit = new FormData(e.currentTarget);
+
+        var config = {
+            method: 'get',
+            url: process.env.REACT_APP_HOST + '/transactions/?ordering=-timestamp&search=' + dataSubmit.get('search-product'),
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+            }
+        };
+
+        axios(config)
+            .then(function (response) {
+                setTransaction(response.data.results)
+                setNext(response.data.next)
+                setPrevious(response.data.previous)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    }
+
     const nextPage = () => {
         var config = {
             method: 'get',
@@ -89,7 +113,7 @@ export default function BusinessTransaction() {
             <div className='business-container'>
                 <div className="business-product">
                     <div className='business-product-search'>
-                        <form>
+                        <form onClick={handleSearch}>
                             <label className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">Your Email</label>
                             <div className="relative">
                                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">

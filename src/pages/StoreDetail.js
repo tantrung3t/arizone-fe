@@ -58,11 +58,13 @@ export default function StoreDetail(props) {
             "latitude": ""
         }
     )
-    const [products, setProducts] = useState(apiProduct)
+    const [products, setProducts] = useState([])
+    const [next, setNext] = useState()
 
     useEffect(() => {
         window.scrollTo(0, 0)
         getStore()
+        getProductStore()
     }, [])
 
     const getStore = async () => {
@@ -82,19 +84,52 @@ export default function StoreDetail(props) {
 
     }
 
+    const getProductStore = () => {
+        var config = {
+            method: 'get',
+            url: HOST + '/product/store/' + props.id,
+            headers: {}
+        };
+
+        axios(config)
+            .then(function (response) {
+                setProducts(response.data.results)
+                setNext(response.data.next)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     const listProduct = () => {
         let element = products.map((product, index) => {
             return <CardProduct key={index}
-                product_name={product.product_name}
+                id={product.id}
+                product_name={product.name}
                 image={product.image}
                 price={product.price}
                 sale={product.sale}
+                average_rating={product.average_rating}
             />
         })
         return element;
     }
     const viewMoreProduct = () => {
-        setProducts(products => products.concat(apiProduct))
+        var config = {
+            method: 'get',
+            url: next,
+            headers: {}
+        };
+
+        axios(config)
+            .then(function (response) {
+                setProducts(products => products.concat(response.data.results))
+                setNext(response.data.next)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
     }
     return (
 
